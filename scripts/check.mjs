@@ -206,7 +206,7 @@ try {
 }
 
 const distAfter = await snapshotDirectory(path.join(root, "dist"));
-assert(distAfter === distBefore, "npm test changed the configured dist directory");
+assert(distAfter === distBefore, "pnpm test changed the configured dist directory");
 
 const sourceImages = (await readdir(path.join(root, "src/assets/images"))).filter((file) => /\.(?:jpg|png|webp)$/.test(file));
 assert(sourceImages.length === 8, `Expected 8 deduplicated images, found ${sourceImages.length}`);

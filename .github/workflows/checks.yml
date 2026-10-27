@@ -14,8 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@v1
         with:
-          node-version: 22
-      - run: npm test
+          runtime: node@22
+          install: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
       - run: docker build --build-arg TALLY_FORM_ID=abc123 --tag bento-kumiko-check .

@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.9.1",
   "scripts": {
     "build": "node build.mjs",
     "check": "node scripts/check.mjs",
     "preview": "node scripts/serve.mjs",
-    "test": "npm run check"
+    "test": "node scripts/check.mjs"
   },
   "engines": {
     "node": ">=20"

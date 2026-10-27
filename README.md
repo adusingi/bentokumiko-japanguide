@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Build, preview and ownership guide for the Bento Kumiko static website."
 tags: [bento-kumiko, website, operations]
-timestamp: 2026-10-27T23:46:03+09:00
+timestamp: 2026-10-28T00:15:27+09:00
 ---
 
 # Bento Kumiko website
@@ -12,20 +12,21 @@ A dependency-free static build preserving the supplied Bento Kumiko design and c
 
 ## Work locally
 
-Requires Node.js 20 or newer.
+Requires Node.js 20 or newer and pnpm `12.9.1`, pinned by `package.json`.
 
 ```sh
-npm run build
-npm run preview
+pnpm install --frozen-lockfile
+pnpm build
+pnpm preview
 ```
 
-Open `http://127.0.0.1:4173`. Run all integrity and form-mode checks with:
+Open `http://127.0.0.1:4173`. The preview serves generated files, so rebuild after content or style changes. Run all integrity and form-mode checks with:
 
 ```sh
-npm test
+pnpm test
 ```
 
-Checks build into disposable directories with explicitly controlled form settings; they do not replace an existing `dist/`, even when `TALLY_FORM_ID` is exported. The normal `npm run build` replaces only the repository's generated `dist/`. A custom `SITE_OUTPUT_DIR` must be outside the repository and either new or empty; populated paths and symbolic-link targets are rejected rather than erased.
+Checks build into disposable directories with explicitly controlled form settings; they do not replace an existing `dist/`, even when `TALLY_FORM_ID` is exported. The normal `pnpm build` replaces only the repository's generated `dist/`. A custom `SITE_OUTPUT_DIR` must be outside the repository and either new or empty; populated paths and symbolic-link targets are rejected rather than erased.
 
 The default build is deliberately non-submitting. It presents an honest preview form that validates in the browser and retains answers only in the current page. Configure the live form through the single `TALLY_FORM_ID` build-time setting described in [Tally activation](/docs/TALLY.md).
 

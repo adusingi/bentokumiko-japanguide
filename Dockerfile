@@ -1,11 +1,13 @@
 FROM node:22-alpine AS builder
 WORKDIR /site
-COPY package.json build.mjs ./
+COPY package.json pnpm-lock.yaml build.mjs ./
+RUN npm install --global "$(node --print 'require("./package.json").packageManager')"
+RUN pnpm install --frozen-lockfile
 COPY lib ./lib
 COPY src ./src
 ARG TALLY_FORM_ID=""
 ENV TALLY_FORM_ID=$TALLY_FORM_ID
-RUN npm run build
+RUN pnpm build
 
 FROM nginx:1.27-alpine
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf

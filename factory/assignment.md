@@ -3,7 +3,7 @@ type: Ticket
 title: "BK-001–003 — Bento Kumiko website delivery"
 description: "Approved isolated Codex implementation, review and delegated local acceptance."
 tags: [software-factory, bentokumiko, website]
-timestamp: 2026-10-27T23:24:25+09:00
+timestamp: 2026-10-27T23:33:05+09:00
 ---
 
 # Bento Kumiko delivery assignment
@@ -17,6 +17,10 @@ Source: `/Users/adusingi/Documents/Code/p/bentokumiko-japanguide`. Five HTML des
 ## BK-001 — maintainable travel planner site
 
 Preserve supplied warm ivory/burgundy editorial design, typography, imagery, actual copy and responsive layout. Build a small static site with shared layout/components, design tokens, readable page content and a deterministic build. Prefer dependency-free Node static templates over a heavy application framework for this brochure site. Extract and deduplicate embedded base64 images into local assets. All five original .html URLs must work. Add the missing testimonials.html using only actual supplied quote(s); pending testimonials must not look like published ratings. Fix broken links/anchors and mobile navigation. Accessible landmarks, skip link, labels, visible focus, reduced-motion behavior. No invented prices, biographies, testimonials or integration capabilities. Preserve real Dokomaps links. Sample historic costs must be labelled illustrative, not current guaranteed quotes.
+
+## Homepage correction from the user
+
+The user clarified during implementation that the blog section must move entirely to its own page. Remove the blog section, city previews and guest-tip editorial block from the homepage; keep Blog in header/footer navigation and keep that content on blog.html. Verify the homepage has no blog section while the separate page retains the supplied blog content.
 
 ## BK-002 — enquiry form and Tally seam
 

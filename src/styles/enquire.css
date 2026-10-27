@@ -1,0 +1,38 @@
+/* ---------- page intro ---------- */
+  .page-intro{padding:56px 0 0}
+  .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin:0}
+  .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
+  .page-intro h1{font-size:clamp(34px,5vw,52px); font-weight:800; margin:14px 0 14px; letter-spacing:-.01em; max-width:16em}
+  .page-intro h1 em{font-style:normal; color:var(--red)}
+  .page-intro .lede{font-size:18.5px; color:var(--soft); margin:0; max-width:38em}
+  .page-intro .lede strong{color:var(--ink)}
+
+  /* ---------- what happens next ---------- */
+  .next{padding:44px 0 0}
+  .next h2{font-size:clamp(22px,3vw,28px); margin:0 0 6px}
+  .steps{list-style:none; margin:0; padding:0; position:relative; max-width:720px}
+  .steps::before{content:""; position:absolute; left:23px; top:14px; bottom:14px; width:2px; background:var(--line)}
+  .step{display:grid; grid-template-columns:48px 1fr; gap:22px; padding:14px 0; position:relative}
+  .step-dot{
+    width:48px; height:48px; border-radius:50%; background:var(--bg); border:2px solid var(--red);
+    color:var(--red); display:grid; place-items:center; font-family:"Shippori Mincho B1",serif;
+    font-weight:800; font-size:18px; position:relative; z-index:1;
+  }
+  .step h3{font-size:19px; margin:2px 0 4px}
+  .step p{margin:0; color:var(--soft); max-width:52em}
+
+  /* ---------- enquire panel ---------- */
+  .enquire{
+    margin:64px 0 0; background:var(--red); color:#FFF3E4; border-radius:22px; padding:56px 46px;
+    position:relative; overflow:hidden;
+  }
+  .enquire .big-jp{
+    position:absolute; right:18px; top:6px; font-family:"Shippori Mincho B1",serif; font-size:120px;
+    color:rgba(255,243,228,.13); line-height:1; pointer-events:none; user-select:none;
+  }
+  .enquire h2{color:#FFF8EC; font-size:clamp(29px,4.4vw,42px); margin:0 0 14px; max-width:16em}
+  .enquire p{color:#FFDFC9; max-width:44em; margin:0 0 16px}
+  .enquire .fineprint{font-size:13.5px; color:#FFC9AC; margin-top:22px}
+  @media (max-width:700px){ .enquire{padding:38px 24px} .enquire .big-jp{font-size:76px} }
+
+  /* ---------- footer (same as homepage) ---------- */

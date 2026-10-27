@@ -1,0 +1,28 @@
+.page-head { padding: 52px 0 4px; max-width: 760px; }
+.sec-kicker { color: var(--red); font-weight: 700; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+.sec-kicker .jp { letter-spacing: .2em; font-size: 14px; }
+.page-head h1 { font-size: clamp(36px, 5.4vw, 56px); font-weight: 800; margin: 14px 0 16px; letter-spacing: -.01em; }
+.page-head h1 em { font-style: normal; color: var(--red); }
+.page-head .lede { font-size: 18.5px; color: var(--soft); margin: 0; }
+section.block { padding: 64px 0 8px; }
+.quote-card { max-width: 830px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(28px, 5vw, 52px); box-shadow: var(--shadow); }
+.quote { font-family: "Shippori Mincho B1", serif; font-size: clamp(24px, 3.4vw, 34px); font-weight: 600; line-height: 1.55; margin: 0 0 18px; }
+.quote::before { content: "“"; color: var(--red); }
+.quote::after { content: "”"; color: var(--red); }
+.attribution { color: var(--faint); font-size: 14.5px; margin: 0; }
+.lesson { max-width: 830px; background: var(--tint); border-radius: 14px; padding: 24px 26px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; margin-top: 24px; }
+.lesson-mark { font-family: "Shippori Mincho B1", serif; font-weight: 800; color: var(--red); font-size: 22px; border: 2px solid var(--red); border-radius: 50%; width: 44px; height: 44px; display: grid; place-items: center; }
+.lesson h2 { margin: 2px 0 6px; font-size: 21px; }
+.lesson p { margin: 0; color: var(--soft); }
+.pending { margin-top: 72px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-top: 30px; padding-bottom: 30px; }
+.pending h2 { margin: 8px 0; font-size: clamp(24px, 3.2vw, 32px); }
+.pending p:last-child { color: var(--soft); margin: 0; max-width: 48em; }
+.cta-band { margin: 76px 0 0; background: var(--red); color: #fff3e4; border-radius: 22px; padding: 48px 46px; }
+.cta-band h2 { color: #fff8ec; font-size: clamp(28px, 4vw, 38px); margin: 0 0 12px; }
+.cta-band p { color: #ffdfc9; margin: 0 0 24px; }
+.cta-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn-white { background: #fff8ec; color: #8f2408; }
+.btn-white:hover { background: #ffe9d2; color: #8f2408; text-decoration: none; }
+.btn-outline { border-color: rgba(255,255,255,.65); color: #fff8ec; }
+.btn-outline:hover { border-color: #fff; color: #fff; text-decoration: none; }
+@media (max-width: 700px) { .cta-band { padding: 36px 24px; } .lesson { grid-template-columns: 1fr; } }

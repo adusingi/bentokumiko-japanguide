@@ -1,0 +1,6 @@
+.error-page { min-height: 58vh; padding-top: clamp(72px, 10vw, 130px); padding-bottom: 80px; max-width: 780px; }
+.sec-kicker { color: var(--red); font-weight: 700; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+.sec-kicker .jp { letter-spacing: .2em; font-size: 14px; }
+.error-page h1 { font-size: clamp(38px, 6vw, 60px); margin: 14px 0 18px; }
+.error-page > p:last-of-type { color: var(--soft); max-width: 38em; }
+.error-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }

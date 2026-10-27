@@ -1,0 +1,133 @@
+/* ---------- page intro ---------- */
+  .page-head{padding:52px 0 0; max-width:760px}
+  .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin:0}
+  .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
+  .sec-kicker::before{content:""; width:34px; height:2px; background:var(--red)}
+  .page-head h1{font-size:clamp(38px,5.6vw,58px); font-weight:800; margin:16px 0 16px; letter-spacing:-.01em}
+  .page-head h1 em{font-style:normal; color:var(--red)}
+  .page-head p{font-size:18.5px; color:var(--soft); margin:0 0 14px}
+  .page-head p strong{color:var(--ink)}
+  .banner{margin-top:38px; border-radius:16px; overflow:hidden; box-shadow:var(--shadow)}
+  .banner img{width:100%; height:300px; object-fit:cover}
+  .banner figcaption{font-size:13.5px; color:var(--faint); padding:10px 4px 0}
+  figure{margin:0}
+  @media (max-width:700px){ .banner img{height:210px} }
+
+  /* ---------- sections ---------- */
+  section.block{padding:84px 0 8px}
+  .sec-head{max-width:640px; margin-bottom:36px}
+  .sec-head h2{font-size:clamp(29px,4vw,40px); margin:10px 0 12px}
+  .sec-head p{color:var(--soft); margin:0}
+  .sec-head .sec-kicker::before{display:none}
+
+  /* ---------- pinned article ---------- */
+  .post.pinned{
+    border:2px solid var(--red); border-radius:20px; position:relative;
+  }
+  .pin-badge{
+    display:inline-flex; align-items:center; gap:7px; background:var(--red); color:#FFF8EC;
+    font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    padding:7px 13px 7px 11px; border-radius:999px; margin:0 0 16px; line-height:1;
+  }
+  .pin-badge svg{width:13px; height:13px; flex:0 0 13px; fill:#FFF8EC}
+
+  /* ---------- featured post ---------- */
+  .post{
+    border:1px solid var(--line); border-radius:20px; padding:48px 52px 44px; background:var(--bg);
+  }
+  .post .label{font-size:12.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin:0 0 10px}
+  .post h2{font-size:clamp(28px,4vw,38px); margin:0 0 18px; max-width:20em}
+  .post .standfirst{font-size:18px; color:var(--soft); max-width:44em; margin:0 0 8px}
+  .post .standfirst strong{color:var(--ink)}
+  .lessons{list-style:none; margin:26px 0 0; padding:0; counter-reset:lesson}
+  .lessons li{
+    counter-increment:lesson; display:grid; grid-template-columns:56px 1fr; gap:22px;
+    padding:24px 0; border-top:1px solid var(--line); align-items:start;
+  }
+  .lessons li::before{
+    content:counter(lesson,decimal-leading-zero);
+    font-family:"Shippori Mincho B1",serif; font-weight:800; font-size:28px; color:var(--red); line-height:1.2;
+  }
+  .lessons h3{font-size:21px; margin:2px 0 6px}
+  .lessons p{margin:0; color:var(--soft); max-width:46em}
+  .lessons p strong{color:var(--ink)}
+  .post-close{
+    margin-top:30px; background:var(--tint); border-radius:14px; padding:24px 26px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px 26px; justify-content:space-between;
+  }
+  .post-close p{margin:0; color:var(--soft); max-width:36em}
+  .post-close p strong{color:var(--ink)}
+  .post-close a{font-weight:700; white-space:nowrap}
+  @media (max-width:700px){
+    .post{padding:32px 22px 28px}
+    .lessons li{grid-template-columns:42px 1fr; gap:14px}
+    .lessons li::before{font-size:22px}
+  }
+
+  /* ---------- post card (afternoon tea) ---------- */
+  .tea{
+    margin-top:28px; border:1px solid var(--line); border-radius:20px; overflow:hidden;
+    display:grid; grid-template-columns:1fr 1fr; background:var(--bg);
+  }
+  .tea-photo{min-height:100%}
+  .tea-photo img{width:100%; height:100%; object-fit:cover}
+  .tea-body{padding:42px 42px 38px}
+  .tea-body .label{font-size:12.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin:0 0 10px}
+  .tea-body h3{font-size:clamp(25px,3.4vw,32px); margin:0 0 12px}
+  .tea-body p{color:var(--soft); margin:0 0 14px}
+  .tea-body p strong{color:var(--ink)}
+  .tea-places{margin:18px 0 20px; padding:0; list-style:none}
+  .tea-places li{padding:9px 0 9px 26px; position:relative; color:var(--soft); border-bottom:1px solid var(--line)}
+  .tea-places li:last-child{border-bottom:none}
+  .tea-places li::before{content:"—"; position:absolute; left:0; color:var(--red); font-weight:700}
+  .tea-places li b{color:var(--ink); font-weight:700}
+  .tea-body a{font-weight:700}
+  .tea-body .note{font-size:13.5px; color:var(--faint); margin:16px 0 0}
+  @media (max-width:820px){
+    .tea{grid-template-columns:1fr}
+    .tea-photo img{height:230px}
+    .tea-body{padding:30px 24px 28px}
+  }
+
+  /* ---------- places I love ---------- */
+  .places-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+  .place-card{border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--bg)}
+  .place-card img{width:100%; height:230px; object-fit:cover}
+  .place-card .p-body{padding:24px 26px 26px}
+  .place-card h3{font-size:24px; margin:0 0 8px}
+  .place-card h3 .jp{font-size:19px; color:var(--faint); font-weight:600; margin-left:6px}
+  .place-card p{color:var(--soft); margin:0; font-size:15.5px}
+  .places-foot{
+    margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:12px 26px; justify-content:space-between;
+  }
+  .places-foot p{margin:0; color:var(--soft); max-width:38em}
+  .places-foot p strong{color:var(--ink)}
+  .places-foot a{font-weight:700; white-space:nowrap}
+  @media (max-width:760px){ .places-grid{grid-template-columns:1fr} .place-card img{height:200px} }
+
+  /* ---------- more to come ---------- */
+  .more-note{
+    margin-top:84px; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:30px 0; text-align:center;
+  }
+  .more-note .jp-line{font-family:"Shippori Mincho B1",serif; letter-spacing:.3em; color:var(--faint); font-size:14px; margin:0 0 10px}
+  .more-note p{margin:0 auto; color:var(--soft); max-width:40em}
+  .more-note p strong{color:var(--ink)}
+
+  /* ---------- enquire call to action ---------- */
+  .enquire{
+    margin:84px 0 0; background:var(--red); color:#FFF3E4; border-radius:22px; padding:56px 46px;
+    position:relative; overflow:hidden;
+  }
+  .enquire .big-jp{
+    position:absolute; right:18px; top:6px; font-family:"Shippori Mincho B1",serif; font-size:120px;
+    color:rgba(255,243,228,.13); line-height:1; pointer-events:none; user-select:none;
+  }
+  .enquire h2{color:#FFF8EC; font-size:clamp(29px,4.4vw,42px); margin:0 0 14px; max-width:16em}
+  .enquire p{color:#FFDFC9; max-width:44em; margin:0 0 26px}
+  .btn-white{background:#FFF8EC; color:#8F2408}
+  .btn-white:hover{background:#FFE9D2; color:#8F2408; text-decoration:none}
+  .enquire .fineprint{font-size:13.5px; color:#FFC9AC; margin:22px 0 0}
+  @media (max-width:700px){ .enquire{padding:38px 24px} .enquire .big-jp{font-size:76px} }
+
+  /* ---------- footer (same as homepage) ---------- */

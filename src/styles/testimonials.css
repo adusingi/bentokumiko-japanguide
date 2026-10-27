@@ -6,6 +6,7 @@
 .page-head .lede { font-size: 18.5px; color: var(--soft); margin: 0; }
 section.block { padding-block: 64px 8px; }
 .quote-card { max-width: 830px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(28px, 5vw, 52px); box-shadow: var(--shadow); }
+.quote-card-secondary { margin-top: 48px; }
 .quote { font-family: "Shippori Mincho B1", serif; font-size: clamp(24px, 3.4vw, 34px); font-weight: 600; line-height: 1.55; margin: 0 0 18px; }
 .quote::before { content: "“"; color: var(--red); }
 .quote::after { content: "”"; color: var(--red); }

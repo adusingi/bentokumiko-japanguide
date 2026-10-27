@@ -135,6 +135,7 @@
     margin:0 0 14px; max-width:24em;
   }
   .big-quote::before{content:"“"; color:var(--red)}
+  .complete-quote::after{content:"”"; color:var(--red)}
   .attribution{color:var(--faint); font-size:14.5px; margin-bottom:30px}
   .highlights{display:grid; grid-template-columns:1fr 1fr; gap:6px 40px; margin:0 0 30px; padding:0; list-style:none}
   .highlights li{padding:10px 0 10px 26px; position:relative; color:var(--soft); border-bottom:1px solid var(--line)}
@@ -149,6 +150,7 @@
   .lesson h3{margin:2px 0 6px; font-size:19px}
   .lesson p{margin:0; color:var(--soft)}
   @media (max-width:600px){ .lesson{grid-template-columns:1fr} }
+  .guest-quote-secondary{margin:0; padding-top:36px; border-top:1px solid var(--line)}
   .pending-note{margin:28px 0 0; padding:18px 20px; border:1px dashed var(--line); border-radius:12px; color:var(--soft)}
   .pending-note strong{color:var(--ink)}
 

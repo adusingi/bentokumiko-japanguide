@@ -29,7 +29,6 @@
   .step h3{font-size:20px; margin:2px 0 6px; display:flex; flex-wrap:wrap; align-items:center; gap:10px}
   .step p{margin:0; color:var(--soft); max-width:52em}
   .badge-optional{font-family:"Zen Kaku Gothic New",sans-serif; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--red-deep); background:var(--tint); border:1px dashed var(--red); border-radius:999px; padding:3px 11px}
-  @media (prefers-color-scheme: dark){ .badge-optional{color:var(--red)} }
 
   /* testimonial quote + lesson */
   .big-quote{font-family:"Shippori Mincho B1",serif; font-size:clamp(23px,3.4vw,32px); font-weight:600; line-height:1.55; margin:0 0 14px; max-width:24em}

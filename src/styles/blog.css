@@ -1,5 +1,5 @@
 /* ---------- page intro ---------- */
-  .page-head{padding:52px 0 0; max-width:760px}
+  .page-head{padding-block:52px 0; max-width:760px}
   .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin:0}
   .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
   .sec-kicker::before{content:""; width:34px; height:2px; background:var(--red)}
@@ -14,7 +14,7 @@
   @media (max-width:700px){ .banner img{height:210px} }
 
   /* ---------- sections ---------- */
-  section.block{padding:84px 0 8px}
+  section.block{padding-block:84px 8px}
   .sec-head{max-width:640px; margin-bottom:36px}
   .sec-head h2{font-size:clamp(29px,4vw,40px); margin:10px 0 12px}
   .sec-head p{color:var(--soft); margin:0}
@@ -129,5 +129,15 @@
   .btn-white:hover{background:#FFE9D2; color:#8F2408; text-decoration:none}
   .enquire .fineprint{font-size:13.5px; color:#FFC9AC; margin:22px 0 0}
   @media (max-width:700px){ .enquire{padding:38px 24px} .enquire .big-jp{font-size:76px} }
+
+  @media (max-width:430px){
+    .page-head{padding-block-start:40px}
+    .page-head h1{font-size:34px}
+    section.block{padding-block:64px 8px}
+    .post{padding:28px 18px 24px}
+    .lessons li{grid-template-columns:36px 1fr;gap:10px}
+    .tea-body,.place-card .p-body{padding:26px 18px}
+    .enquire{padding:34px 18px}
+  }
 
   /* ---------- footer (same as homepage) ---------- */

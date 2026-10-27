@@ -1,8 +1,12 @@
-import { mkdtemp, readFile, readdir, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdtemp, mkdir, readFile, readdir, stat, symlink, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
+import { request } from "node:http";
 import os from "node:os";
 import path from "node:path";
+import { planOutputDirectory, prepareOutputDirectory } from "../lib/output-directory.mjs";
 import { enquiryFields } from "../src/components/enquiry.mjs";
+import { createPreviewServer } from "./serve.mjs";
 
 const root = process.cwd();
 const requiredPages = ["index", "about", "service", "testimonials", "blog", "enquire", "404"];
@@ -30,6 +34,44 @@ async function filesRecursively(directory) {
     else files.push(candidate);
   }
   return files;
+}
+
+async function snapshotDirectory(directory) {
+  try {
+    const files = await filesRecursively(directory);
+    const hash = createHash("sha256");
+    for (const file of files.sort()) {
+      hash.update(path.relative(directory, file));
+      hash.update(await readFile(file));
+    }
+    return hash.digest("hex");
+  } catch (error) {
+    if (error.code === "ENOENT") return "missing";
+    throw error;
+  }
+}
+
+async function assertRejects(operation, message) {
+  let rejected = false;
+  try {
+    await operation();
+  } catch {
+    rejected = true;
+  }
+  assert(rejected, message);
+}
+
+function get(server, requestPath) {
+  return new Promise((resolve, reject) => {
+    const address = server.address();
+    const outgoing = request({ hostname: "127.0.0.1", port: address.port, path: requestPath }, (response) => {
+      const chunks = [];
+      response.on("data", (chunk) => chunks.push(chunk));
+      response.on("end", () => resolve({ status: response.statusCode, body: Buffer.concat(chunks).toString("utf8") }));
+    });
+    outgoing.on("error", reject);
+    outgoing.end();
+  });
 }
 
 async function inspectSite(directory, expectedMode) {
@@ -86,15 +128,19 @@ async function inspectSite(directory, expectedMode) {
   assert(relativeFiles.has("health"), "Missing health endpoint file");
 }
 
-const defaultBuild = build();
-assert(defaultBuild.status === 0, `Default build failed: ${defaultBuild.stderr}`);
-await inspectSite(path.join(root, "dist"), "preview");
-const preview = await readFile(path.join(root, "dist/enquire.html"), "utf8");
+const testRoot = await mkdtemp(path.join(os.tmpdir(), "bento-check-"));
+const distBefore = await snapshotDirectory(path.join(root, "dist"));
+
+const previewDirectory = path.join(testRoot, "preview");
+const previewBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: previewDirectory });
+assert(previewBuild.status === 0, `Preview build failed: ${previewBuild.stderr}`);
+await inspectSite(previewDirectory, "preview");
+const preview = await readFile(path.join(previewDirectory, "enquire.html"), "utf8");
 assert(preview.includes("nothing on this page is sent or saved"), "Preview disclosure is missing");
 assert(preview.includes('method="dialog"'), "Preview form can submit over the network without JavaScript");
 assert(!preview.includes("tally.so/embed/"), "Unconfigured build contains a Tally embed");
 
-const configuredDirectory = await mkdtemp(path.join(os.tmpdir(), "bento-tally-"));
+const configuredDirectory = path.join(testRoot, "configured");
 const configuredBuild = build({ TALLY_FORM_ID: "abc123", SITE_OUTPUT_DIR: configuredDirectory });
 assert(configuredBuild.status === 0, `Configured build failed: ${configuredBuild.stderr}`);
 await inspectSite(configuredDirectory, "tally");
@@ -103,12 +149,66 @@ assert(configured.includes("https://tally.so/embed/abc123"), "Configured build l
 assert(configured.includes("https://tally.so/r/abc123"), "Configured build lacks hosted-form fallback");
 assert(!configured.includes("enquiry-preview.js"), "Configured build includes preview behavior");
 
-const invalidDirectory = path.join(os.tmpdir(), `bento-invalid-${process.pid}`);
+const invalidDirectory = path.join(testRoot, "invalid");
 const invalidBuild = build({ TALLY_FORM_ID: "not/a/form", SITE_OUTPUT_DIR: invalidDirectory });
 assert(invalidBuild.status !== 0, "Invalid Tally configuration did not fail");
 assert(invalidBuild.stderr.includes("TALLY_FORM_ID"), "Invalid Tally error is unclear");
 
+const populatedDirectory = path.join(testRoot, "populated");
+await mkdir(populatedDirectory);
+const sentinel = path.join(populatedDirectory, "keep.txt");
+await writeFile(sentinel, "keep me\n");
+const populatedBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: populatedDirectory });
+assert(populatedBuild.status !== 0, "A populated custom output directory was accepted");
+assert(await readFile(sentinel, "utf8") === "keep me\n", "A populated custom output directory was modified");
+
+const symlinkTarget = path.join(testRoot, "symlink-target");
+const symlinkOutput = path.join(testRoot, "symlink-output");
+await mkdir(symlinkTarget);
+await writeFile(path.join(symlinkTarget, "keep.txt"), "keep me too\n");
+await symlink(symlinkTarget, symlinkOutput, "dir");
+const symlinkBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: symlinkOutput });
+assert(symlinkBuild.status !== 0, "A symbolic-link output directory was accepted");
+assert(await readFile(path.join(symlinkTarget, "keep.txt"), "utf8") === "keep me too\n", "A symbolic-link target was modified");
+
+await assertRejects(
+  () => planOutputDirectory({ repositoryRoot: root, requestedOutput: "src" }),
+  "A source directory was accepted as output",
+);
+await assertRejects(
+  () => planOutputDirectory({ repositoryRoot: root, requestedOutput: path.dirname(root) }),
+  "A repository ancestor was accepted as output",
+);
+
+const fixtureRepository = path.join(testRoot, "fixture-repository");
+const fixtureDist = path.join(fixtureRepository, "dist");
+await mkdir(fixtureDist, { recursive: true });
+await writeFile(path.join(fixtureDist, "stale.txt"), "stale\n");
+const fixturePlan = await planOutputDirectory({ repositoryRoot: fixtureRepository });
+await prepareOutputDirectory(fixturePlan);
+assert((await readdir(fixtureDist)).length === 0, "The known generated output was not replaced during a normal rebuild");
+
+const server = createPreviewServer(previewDirectory);
+await new Promise((resolve, reject) => {
+  server.once("error", reject);
+  server.listen(0, "127.0.0.1", resolve);
+});
+try {
+  const malformed = await get(server, "/%ZZ");
+  assert(malformed.status === 400, `Malformed URL returned ${malformed.status} instead of 400`);
+  const traversal = await get(server, "/%2e%2e%2fpackage.json");
+  assert(traversal.status === 404, `Traversal URL returned ${traversal.status} instead of 404`);
+  assert(!traversal.body.includes('"scripts"'), "Traversal response exposed a repository file");
+  const health = await get(server, "/health");
+  assert(health.status === 200 && health.body === "ok\n", "Preview server did not remain healthy after malformed requests");
+} finally {
+  await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+}
+
+const distAfter = await snapshotDirectory(path.join(root, "dist"));
+assert(distAfter === distBefore, "npm test changed the configured dist directory");
+
 const sourceImages = (await readdir(path.join(root, "src/assets/images"))).filter((file) => /\.(?:jpg|png|webp)$/.test(file));
 assert(sourceImages.length === 8, `Expected 8 deduplicated images, found ${sourceImages.length}`);
 
-console.log(`Checks passed: ${assertions} assertions; preview, configured Tally and invalid configuration states verified.`);
+console.log(`Checks passed: ${assertions} assertions; isolated builds, safe output handling and preview routing verified.`);

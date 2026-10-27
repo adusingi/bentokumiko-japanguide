@@ -1,11 +1,11 @@
 /* ---------- shared ---------- */
-  section.block{padding:76px 0 8px}
+  section.block{padding-block:76px 8px}
   .sec-head{max-width:660px; margin-bottom:34px}
   .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
   .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
   .sec-head h2{font-size:clamp(29px,4vw,40px); margin:10px 0 12px}
   .sec-head p{color:var(--soft); margin:0}
-  .page-head{padding:52px 0 4px; max-width:760px}
+  .page-head{padding-block:52px 4px; max-width:760px}
   .page-head h1{font-size:clamp(36px,5.4vw,56px); font-weight:800; margin:14px 0 16px; letter-spacing:-.01em}
   .page-head h1 em{font-style:normal; color:var(--red)}
   .page-head p.lede{font-size:18.5px; color:var(--soft); margin:0}
@@ -70,3 +70,9 @@
   .cta-band h2{color:#FFF8EC; font-size:clamp(28px,4vw,38px); margin:0 0 12px}
   .cta-band p{color:#FFDFC9; max-width:44em; margin:0 0 24px}
   @media (max-width:700px){ .cta-band{padding:36px 24px} }
+  @media (max-width:430px){
+    .page-head{padding-block-start:40px}
+    .page-head h1{font-size:34px}
+    section.block{padding-block:60px 8px}
+    .cta-band{padding:34px 18px}
+  }

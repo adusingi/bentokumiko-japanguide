@@ -1,5 +1,5 @@
 /* ---------- hero ---------- */
-  .hero{padding:34px 0 0}
+  .hero{padding-block:34px 0}
   .hero-grid{display:grid; grid-template-columns:1.02fr .98fr; gap:44px; align-items:center}
   .hero-eyebrow{display:flex; align-items:center; gap:10px; color:var(--red); font-weight:700; font-size:13.5px; letter-spacing:.16em; text-transform:uppercase}
   .hero-eyebrow::before{content:""; width:34px; height:2px; background:var(--red)}
@@ -43,7 +43,7 @@
   .trust i{font-style:normal; color:var(--red); font-weight:700}
 
   /* ---------- sections ---------- */
-  section.block{padding:84px 0 8px}
+  section.block{padding-block:84px 8px}
   .sec-head{max-width:640px; margin-bottom:36px}
   .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
   .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
@@ -205,4 +205,14 @@
     .special{grid-template-columns:1fr}
     .special-text{padding:32px 24px 28px}
     .special-side{padding:30px 24px}
+  }
+
+  @media (max-width:430px){
+    .hero{padding-block-start:28px}
+    .hero h1{font-size:clamp(36px,12vw,48px)}
+    .hero-actions,.sample-actions{display:grid;grid-template-columns:1fr}
+    section.block{padding-block:64px 8px}
+    .sample{padding:32px 18px}
+    .enquire{padding:34px 16px}
+    .special-text,.special-side{padding:28px 18px}
   }

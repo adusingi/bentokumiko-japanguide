@@ -1,10 +1,10 @@
-.page-head { padding: 52px 0 4px; max-width: 760px; }
+.page-head { padding-block: 52px 4px; max-width: 760px; }
 .sec-kicker { color: var(--red); font-weight: 700; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
 .sec-kicker .jp { letter-spacing: .2em; font-size: 14px; }
 .page-head h1 { font-size: clamp(36px, 5.4vw, 56px); font-weight: 800; margin: 14px 0 16px; letter-spacing: -.01em; }
 .page-head h1 em { font-style: normal; color: var(--red); }
 .page-head .lede { font-size: 18.5px; color: var(--soft); margin: 0; }
-section.block { padding: 64px 0 8px; }
+section.block { padding-block: 64px 8px; }
 .quote-card { max-width: 830px; border: 1px solid var(--line); border-radius: 18px; padding: clamp(28px, 5vw, 52px); box-shadow: var(--shadow); }
 .quote { font-family: "Shippori Mincho B1", serif; font-size: clamp(24px, 3.4vw, 34px); font-weight: 600; line-height: 1.55; margin: 0 0 18px; }
 .quote::before { content: "“"; color: var(--red); }
@@ -26,3 +26,9 @@ section.block { padding: 64px 0 8px; }
 .btn-outline { border-color: rgba(255,255,255,.65); color: #fff8ec; }
 .btn-outline:hover { border-color: #fff; color: #fff; text-decoration: none; }
 @media (max-width: 700px) { .cta-band { padding: 36px 24px; } .lesson { grid-template-columns: 1fr; } }
+@media (max-width: 430px) {
+  .page-head { padding-block-start: 40px; }
+  .page-head h1 { font-size: 34px; }
+  .quote-card { padding: 26px 18px; }
+  .lesson, .cta-band { padding: 30px 18px; }
+}

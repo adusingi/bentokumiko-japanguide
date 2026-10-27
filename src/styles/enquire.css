@@ -1,5 +1,5 @@
 /* ---------- page intro ---------- */
-  .page-intro{padding:56px 0 0}
+  .page-intro{padding-block:56px 0}
   .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px; margin:0}
   .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
   .page-intro h1{font-size:clamp(34px,5vw,52px); font-weight:800; margin:14px 0 14px; letter-spacing:-.01em; max-width:16em}
@@ -8,7 +8,7 @@
   .page-intro .lede strong{color:var(--ink)}
 
   /* ---------- what happens next ---------- */
-  .next{padding:44px 0 0}
+  .next{padding-block:44px 0}
   .next h2{font-size:clamp(22px,3vw,28px); margin:0 0 6px}
   .steps{list-style:none; margin:0; padding:0; position:relative; max-width:720px}
   .steps::before{content:""; position:absolute; left:23px; top:14px; bottom:14px; width:2px; background:var(--line)}
@@ -34,5 +34,11 @@
   .enquire p{color:#FFDFC9; max-width:44em; margin:0 0 16px}
   .enquire .fineprint{font-size:13.5px; color:#FFC9AC; margin-top:22px}
   @media (max-width:700px){ .enquire{padding:38px 24px} .enquire .big-jp{font-size:76px} }
+  @media (max-width:430px){
+    .page-intro{padding-block-start:40px}
+    .page-intro h1{font-size:34px}
+    .step{gap:16px}
+    .enquire{padding:34px 16px}
+  }
 
   /* ---------- footer (same as homepage) ---------- */

@@ -1,6 +1,7 @@
 FROM node:22-alpine AS builder
 WORKDIR /site
 COPY package.json build.mjs ./
+COPY lib ./lib
 COPY src ./src
 ARG TALLY_FORM_ID=""
 ENV TALLY_FORM_ID=$TALLY_FORM_ID

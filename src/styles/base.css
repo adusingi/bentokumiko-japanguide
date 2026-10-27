@@ -9,6 +9,7 @@
   --red-deep: color-mix(in srgb, var(--red) 82%, var(--ink));
   --shadow: 0 18px 44px rgba(33, 26, 20, .13);
   --header-bg: rgba(255, 255, 255, .94);
+  --gutter: clamp(18px, 5.5vw, 22px);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +32,7 @@ body {
   font-size: 17px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
 }
 h1, h2, h3, .mincho {
   font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
@@ -46,7 +48,7 @@ a {
 }
 a:hover { text-decoration-color: var(--red); }
 :focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 22px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: var(--gutter); }
 .jp { font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", serif; }
 .skip-link {
   position: fixed;
@@ -72,7 +74,7 @@ header.site {
   transition: border-color .25s, box-shadow .25s;
 }
 header.site.scrolled { border-bottom-color: var(--line); box-shadow: 0 6px 24px rgba(33, 26, 20, .07); }
-.header-in { display: flex; align-items: center; gap: 18px; padding: 12px 0; }
+.header-in { display: flex; align-items: center; gap: 18px; padding-block: 12px; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); margin-right: auto; }
 .hanko {
   width: 42px;
@@ -107,6 +109,8 @@ nav.main a:hover, nav.main a.current { color: var(--red); }
   font-weight: 700;
   font-size: 15.5px;
   cursor: pointer;
+  justify-content: center;
+  min-height: 44px;
   text-decoration: none;
   transition: transform .15s, background .15s, color .15s, border-color .15s;
 }
@@ -115,7 +119,7 @@ nav.main a:hover, nav.main a.current { color: var(--red); }
 .btn-red:hover { background: var(--red-deep); color: #fff8ec; text-decoration: none; }
 .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover { border-color: var(--red); color: var(--red); text-decoration: none; }
-.btn-small { padding: 9px 19px; font-size: 14.5px; }
+.btn-small { padding: 9px 19px; font-size: 14.5px; min-height: 44px; }
 nav.main a.btn-red, nav.main a.btn-red:hover { color: #fff8ec; }
 
 footer.site { border-top: 1px solid var(--line); margin-top: 84px; padding: 38px 0 46px; }
@@ -158,13 +162,14 @@ footer.site { border-top: 1px solid var(--line); margin-top: 84px; padding: 38px
   border-radius: 10px;
   padding: 12px 14px;
   width: 100%;
+  min-height: 48px;
 }
 .f-field textarea { resize: vertical; min-height: 92px; }
 .f-field input::placeholder, .f-field textarea::placeholder { color: var(--faint); }
 .f-radios { border: 0; margin: 0; padding: 0; }
 .f-radios legend { font-weight: 700; font-size: 15px; color: var(--ink); padding: 0; margin-bottom: 9px; }
 .f-radio-row { display: flex; flex-wrap: wrap; gap: 9px; }
-.f-radio { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; font-size: 15px; cursor: pointer; color: var(--soft); background: var(--bg); }
+.f-radio { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; font-size: 15px; cursor: pointer; color: var(--soft); background: var(--bg); }
 .f-radio input { accent-color: var(--red); width: 17px; height: 17px; margin: 0; flex: 0 0 auto; }
 .f-radio:has(input:checked) { border-color: var(--red); color: var(--ink); background: var(--tint); }
 .f-submit { margin-top: 24px; }
@@ -183,18 +188,30 @@ footer.site { border-top: 1px solid var(--line); margin-top: 84px; padding: 38px
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 8px 22px 18px;
+    padding: 8px var(--gutter) 18px;
     border-bottom: 1px solid var(--line);
     box-shadow: 0 18px 30px rgba(33, 26, 20, .1);
   }
   nav.main.open { display: flex; }
-  nav.main a { padding: 11px 2px; border-bottom: 1px solid var(--line); }
+  nav.main a { display: flex; align-items: center; min-height: 44px; padding: 10px 2px; border-bottom: 1px solid var(--line); }
   nav.main .btn { margin-top: 12px; justify-content: center; }
   .nav-toggle { display: grid; place-items: center; }
 }
 
 @media (max-width: 640px) {
   .enquiry-form .f-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 430px) {
+  body { font-size: 16px; line-height: 1.7; }
+  .header-in { gap: 12px; }
+  .brand { gap: 10px; min-width: 0; }
+  .brand-name { font-size: 18px; }
+  .brand-sub { font-size: 10px; letter-spacing: .1em; }
+  footer.site { margin-top: 64px; padding-block: 32px 38px; }
+  .form-card { padding: 20px 16px; }
+  .f-radio-row { gap: 8px; }
+  .tally-frame { min-height: 680px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

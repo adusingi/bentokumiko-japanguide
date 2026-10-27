@@ -1,12 +1,12 @@
 /* ---------- page head ---------- */
-  .page-head{padding:52px 0 4px; max-width:720px}
+  .page-head{padding-block:52px 4px; max-width:720px}
   .page-head h1{font-size:clamp(36px,5.4vw,54px); font-weight:800; margin:14px 0 16px; letter-spacing:-.01em}
   .page-head h1 em{font-style:normal; color:var(--red)}
   .page-head p{font-size:18.5px; color:var(--soft); margin:0}
   .page-head p strong{color:var(--ink)}
 
   /* ---------- sections ---------- */
-  section.block{padding:84px 0 8px}
+  section.block{padding-block:84px 8px}
   .sec-head{max-width:640px; margin-bottom:36px}
   .sec-kicker{color:var(--red); font-weight:700; font-size:13px; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
   .sec-kicker .jp{letter-spacing:.2em; font-size:14px}
@@ -129,3 +129,11 @@
   .btn-white{background:#FFF8EC; color:#8F2408}
   .btn-white:hover{background:#FFE9D2; color:#8F2408; text-decoration:none}
   @media (max-width:700px){ .cta-band{padding:36px 24px} .cta-band .btn{margin-left:0} }
+  @media (max-width:430px){
+    .page-head{padding-block-start:40px}
+    .page-head h1{font-size:34px}
+    section.block{padding-block:64px 8px}
+    .sample{padding:32px 18px}
+    .special-text,.special-side{padding:28px 18px}
+    .cta-band{padding:34px 18px}
+  }

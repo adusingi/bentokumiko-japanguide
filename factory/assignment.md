@@ -3,7 +3,7 @@ type: Ticket
 title: "BK-001–003 — Bento Kumiko website delivery"
 description: "Approved isolated Codex implementation, review and delegated local acceptance."
 tags: [software-factory, bentokumiko, website]
-timestamp: 2026-10-27T23:33:05+09:00
+timestamp: 2026-10-27T23:40:58+09:00
 ---
 
 # Bento Kumiko delivery assignment
@@ -21,6 +21,10 @@ Preserve supplied warm ivory/burgundy editorial design, typography, imagery, act
 ## Homepage correction from the user
 
 The user clarified during implementation that the blog section must move entirely to its own page. Remove the blog section, city previews and guest-tip editorial block from the homepage; keep Blog in header/footer navigation and keep that content on blog.html. Verify the homepage has no blog section while the separate page retains the supplied blog content.
+
+## Mobile-first correction from the user
+
+Mobile is the primary design and acceptance target. Verify all pages at 320, 390 and 430px widths: comfortable consistent gutters, readable typography, touch-friendly controls, usable enquiry fields and navigation, no clipping or horizontal page overflow. Preserve the supplied desktop editorial design as the larger-screen enhancement.
 
 ## BK-002 — enquiry form and Tally seam
 

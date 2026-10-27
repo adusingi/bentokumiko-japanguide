@@ -3,7 +3,7 @@ type: Guide
 title: "Tally enquiry activation"
 description: "Field mapping, build setting and verification steps for the live Tally enquiry form."
 tags: [bento-kumiko, tally, forms]
-timestamp: 2026-10-27T23:29:33+09:00
+timestamp: 2026-10-27T23:46:03+09:00
 ---
 
 # Tally enquiry activation
@@ -34,7 +34,7 @@ Create these fields in Tally with the displayed labels and required state. The k
 1. Complete the form's recipient, privacy wording and confirmation message in Tally, then publish it.
 2. In Tally's **Share** tab, select a standard embed and copy the form ID from the published URL or embed. Tally documents the current flow in [Embed your form](https://tally.so/help/embed-your-form).
 3. Build with only the ID, not a URL: `TALLY_FORM_ID=abc123 npm run build`.
-4. Run `npm test`; its configured-render test uses a harmless fixture ID and never submits data.
+4. Run `npm test`; its isolated configured-render test uses a harmless fixture ID, never submits data and leaves any existing configured `dist/` unchanged. An exported `TALLY_FORM_ID` does not alter the test fixtures.
 5. Preview the real configured build and verify both the iframe and hosted-form fallback before deployment.
 
 For Dokploy, set `TALLY_FORM_ID` under Docker **Build Time Arguments** and redeploy. Changing the ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside the published form.

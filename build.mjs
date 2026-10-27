@@ -1,11 +1,11 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { planOutputDirectory, prepareOutputDirectory } from "./lib/output-directory.mjs";
 import { renderEnquiry } from "./src/components/enquiry.mjs";
 import { renderLayout } from "./src/components/layout.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
-const output = path.resolve(root, process.env.SITE_OUTPUT_DIR || "dist");
 const tallyFormId = process.env.TALLY_FORM_ID || "";
 
 if (tallyFormId && !/^[A-Za-z0-9]+$/.test(tallyFormId)) {
@@ -43,7 +43,12 @@ const pages = {
   },
 };
 
-await rm(output, { recursive: true, force: true });
+const outputPlan = await planOutputDirectory({
+  repositoryRoot: root,
+  requestedOutput: process.env.SITE_OUTPUT_DIR || "dist",
+});
+const { output } = outputPlan;
+await prepareOutputDirectory(outputPlan);
 await mkdir(path.join(output, "assets"), { recursive: true });
 await cp(path.join(root, "src/assets"), path.join(output, "assets"), { recursive: true });
 await mkdir(path.join(output, "assets/styles"), { recursive: true });

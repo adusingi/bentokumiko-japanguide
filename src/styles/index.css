@@ -139,6 +139,7 @@
   .lesson p{margin:0; color:var(--soft)}
   @media (max-width:600px){ .lesson{grid-template-columns:1fr} }
   .guest-cards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:40px}
+  .guest-cards[hidden]{display:none}
   .guest-card{margin:0; min-width:0; padding:28px 26px; background:var(--tint); border:1px dashed var(--faint); border-radius:14px; display:flex; flex-direction:column}
   .guest-card-real{position:relative}
   .guest-card-real.testimonial-popup-ready,.guest-card-lee{height:230px}

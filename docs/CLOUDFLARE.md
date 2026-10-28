@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko Cloudflare and OVH preparation"
 description: "Static Workers setup, Git branch settings, OVH DNS migration, cutover, rollback and future D1 guidance."
 tags: [bento-kumiko, cloudflare, github, ovh, dns, d1]
-timestamp: 2026-10-28T17:08:37+09:00
+timestamp: 2026-10-28T17:18:15+09:00
 ---
 
 # Cloudflare and OVH preparation
@@ -48,13 +48,13 @@ When the owner connects the repository in Workers Builds, use these settings:
 | Preview command | `pnpm exec wrangler preview` |
 | Build variable | `PNPM_VERSION=12.9.1` |
 | Build variable | `NODE_VERSION=22` |
-| Optional public build variable | `TALLY_FORM_ID=<approved published form ID>` |
+| Optional public build variable | `TALLY_FORM_ID=<different approved form ID>` |
 
 Including `pnpm test` in Cloudflare's build command makes a failing site check stop that build before deployment instead of relying on the timing of GitHub Actions.
 
 The exact pnpm version is also pinned by `packageManager` in `package.json`. Cloudflare's current build image supports that field and `PNPM_VERSION`; see [build image tool versions](https://developers.cloudflare.com/workers/ci-cd/builds/build-image/). New Workers use `wrangler preview` for non-production builds, not the older `wrangler versions upload` model; see [build branch control](https://developers.cloudflare.com/workers/ci-cd/builds/build-branches/) and [build command settings](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
 
-`TALLY_FORM_ID` is a public build setting, not a secret. Leave it unset for the honest non-submitting preview form, and add it only after the [Tally activation checklist](/docs/TALLY.md) is complete. Preview and production settings are independent in Cloudflare, so verify both deliberately.
+`TALLY_FORM_ID` is a public build setting, not a secret. Leave it unset to use the repository default `6DDMge`, set another approved ID to override it, or supply an explicit empty value for the non-submitting preview mode. Complete the remaining owner checks in the [Tally activation checklist](/docs/TALLY.md). Preview and production settings are independent in Cloudflare, so verify both deliberately.
 
 Do not add `routes` or custom domains to `wrangler.jsonc`. That keeps a repository build from automatically taking over live hostnames.
 

@@ -18,9 +18,11 @@ function assert(condition, message) {
 }
 
 function build(environment = {}) {
+  const isolatedEnvironment = { ...process.env };
+  delete isolatedEnvironment.TALLY_FORM_ID;
   return spawnSync(process.execPath, ["build.mjs"], {
     cwd: root,
-    env: { ...process.env, ...environment },
+    env: { ...isolatedEnvironment, ...environment },
     encoding: "utf8",
   });
 }
@@ -115,10 +117,17 @@ async function inspectSite(directory, expectedMode) {
   const enquire = htmlByPage.get("enquire");
   const blog = htmlByPage.get("blog");
   const testimonialPopupScript = 'src="/assets/scripts/testimonial-popup.js"';
+  const tallyWidgetScript = 'src="https://tally.so/widgets/embed.js"';
+  const tallyEmbedScript = 'src="/assets/scripts/tally-embed.js"';
+  const enquiryPreviewScript = 'src="/assets/scripts/enquiry-preview.js"';
   for (const [page, html] of htmlByPage) {
+    const hasEnquiryForm = page === "index" || page === "enquire";
     assert(html.includes('href="/index.html#testimonials"'), `${page}.html navigation does not link to homepage testimonials`);
     assert(!html.includes('href="/testimonials.html"'), `${page}.html still links to the removed testimonials page`);
     assert((page === "index") === html.includes(testimonialPopupScript), `${page}.html has the wrong testimonial popup script state`);
+    assert((expectedMode === "tally" && hasEnquiryForm) === html.includes(tallyWidgetScript), `${page}.html has the wrong Tally widget script state`);
+    assert((expectedMode === "tally" && hasEnquiryForm) === html.includes(tallyEmbedScript), `${page}.html has the wrong Tally initializer state`);
+    assert((expectedMode === "preview" && hasEnquiryForm) === html.includes(enquiryPreviewScript), `${page}.html has the wrong enquiry preview script state`);
   }
   assert(!index.includes('id="blog"'), "Homepage still contains the removed blog section");
   assert(!index.includes("Five tips from my recent guests"), "Homepage still contains blog editorial copy");
@@ -135,6 +144,7 @@ async function inspectSite(directory, expectedMode) {
   const headers = await readFile(path.join(directory, "_headers"), "utf8");
   const redirects = await readFile(path.join(directory, "_redirects"), "utf8");
   assert(headers.includes("Content-Security-Policy:"), "Cloudflare security headers are missing");
+  assert(headers.includes("script-src 'self' https://tally.so"), "Cloudflare CSP does not allow the official Tally widget script");
   assert(headers.includes("/assets/images/*\n  Cache-Control: public, max-age=31536000, immutable"), "Cloudflare image caching is not immutable");
   assert(redirects.trim() === "/ /index.html 200", "Cloudflare root rewrite is missing or too broad");
 }
@@ -148,6 +158,14 @@ assert(!("routes" in wrangler), "Wrangler config must not claim live domains");
 
 const testRoot = await mkdtemp(path.join(os.tmpdir(), "bento-check-"));
 const distBefore = await snapshotDirectory(path.join(root, "dist"));
+
+const defaultDirectory = path.join(testRoot, "default");
+const defaultBuild = build({ SITE_OUTPUT_DIR: defaultDirectory });
+assert(defaultBuild.status === 0, `Default build failed: ${defaultBuild.stderr}`);
+await inspectSite(defaultDirectory, "tally");
+const defaultEnquire = await readFile(path.join(defaultDirectory, "enquire.html"), "utf8");
+assert(defaultEnquire.includes("https://tally.so/embed/6DDMge"), "Default build lacks the approved Tally form");
+assert(defaultEnquire.includes("https://tally.so/r/6DDMge"), "Default build lacks the approved hosted-form fallback");
 
 const previewDirectory = path.join(testRoot, "preview");
 const previewBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: previewDirectory });
@@ -165,7 +183,21 @@ await inspectSite(configuredDirectory, "tally");
 const configured = await readFile(path.join(configuredDirectory, "enquire.html"), "utf8");
 assert(configured.includes("https://tally.so/embed/abc123"), "Configured build lacks Tally embed");
 assert(configured.includes("https://tally.so/r/abc123"), "Configured build lacks hosted-form fallback");
+assert(!configured.includes("https://tally.so/embed/6DDMge"), "Configured build ignored the Tally form override");
+assert(configured.includes('data-tally-src="https://tally.so/embed/abc123'), "Configured build does not use Tally's widget embed attribute");
+assert(configured.includes("dynamicHeight=1"), "Configured Tally embed does not request dynamic height");
+assert(configured.includes('height="200"'), "Configured Tally embed lacks the official initial height");
+assert(!/<iframe[^>]*\ssrc="https:\/\/tally\.so\/embed\/abc123/.test(configured), "Configured Tally iframe bypasses the widget loader");
 assert(!configured.includes("enquiry-preview.js"), "Configured build includes preview behavior");
+
+const tallyInitializer = await readFile(path.join(root, "src/assets/scripts/tally-embed.js"), "utf8");
+assert(tallyInitializer.includes("Tally?.loadEmbeds()"), "Tally initializer does not call the official embed loader");
+const baseStyles = await readFile(path.join(root, "src/styles/base.css"), "utf8");
+assert(!/\.tally-frame\s*\{[^}]*min-height/s.test(baseStyles), "Tally frame CSS blocks dynamic-height shrinking");
+const nginxSecurityHeaders = await readFile(path.join(root, "nginx/security-headers.conf"), "utf8");
+assert(nginxSecurityHeaders.includes("script-src 'self' https://tally.so"), "nginx CSP does not allow the official Tally widget script");
+const dockerfile = await readFile(path.join(root, "Dockerfile"), "utf8");
+assert(dockerfile.includes('ARG TALLY_FORM_ID="6DDMge"'), "Docker build does not default to the approved Tally form");
 
 const invalidDirectory = path.join(testRoot, "invalid");
 const invalidBuild = build({ TALLY_FORM_ID: "not/a/form", SITE_OUTPUT_DIR: invalidDirectory });

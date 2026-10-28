@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Build, preview, deployment preparation and ownership guide for the Bento Kumiko static website."
 tags: [bento-kumiko, website, operations, cloudflare]
-timestamp: 2026-10-28T16:32:33+09:00
+timestamp: 2026-10-28T17:18:15+09:00
 ---
 
 # Bento Kumiko website
@@ -28,6 +28,8 @@ pnpm test
 
 Checks build into disposable directories with explicitly controlled form settings; they do not replace an existing `dist/`, even when `TALLY_FORM_ID` is exported. The normal `pnpm build` replaces only the repository's generated `dist/`. A custom `SITE_OUTPUT_DIR` must be outside the repository and either new or empty; populated paths and symbolic-link targets are rejected rather than erased.
 
+An ordinary `pnpm build` embeds the owner-supplied public Tally form `6DDMge`. Use `TALLY_FORM_ID=abc123 pnpm build` to override it with another approved public form, or `TALLY_FORM_ID= pnpm build` to explicitly produce the non-submitting local preview. The setting is public build configuration, not a secret.
+
 Cloudflare Workers Static Assets preparation can be checked without logging in or deploying:
 
 ```sh
@@ -36,7 +38,7 @@ pnpm cloudflare:dry-run
 
 For local Cloudflare emulation, eventual deployment and the Git/OVH cutover checklist, use the [Cloudflare preparation guide](/docs/CLOUDFLARE.md). The repository contains configuration only; it does not imply that a GitHub repository, Cloudflare project, DNS zone or custom domain has been created.
 
-The default build is deliberately non-submitting. It presents an honest preview form that validates in the browser and retains answers only in the current page. Configure the live form through the single `TALLY_FORM_ID` build-time setting described in [Tally activation](/docs/TALLY.md).
+The live form uses Tally's official responsive embed loader and retains a direct hosted-form fallback. Field mapping, explicit preview mode and the remaining owner-side delivery checks are documented in [Tally activation](/docs/TALLY.md).
 
 ## Source map
 

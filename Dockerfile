@@ -6,7 +6,7 @@ RUN pnpm install --frozen-lockfile --prod
 COPY lib ./lib
 COPY src ./src
 COPY cloudflare ./cloudflare
-ARG TALLY_FORM_ID=""
+ARG TALLY_FORM_ID="6DDMge"
 ENV TALLY_FORM_ID=$TALLY_FORM_ID
 RUN pnpm build
 

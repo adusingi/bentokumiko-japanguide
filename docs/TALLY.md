@@ -1,14 +1,16 @@
 ---
 type: Guide
 title: "Tally enquiry activation"
-description: "Field mapping, build setting and verification steps for the live Tally enquiry form."
+description: "Default form, build modes, field mapping and verification steps for the Tally enquiry integration."
 tags: [bento-kumiko, tally, forms]
-timestamp: 2026-10-28T17:08:37+09:00
+timestamp: 2026-10-28T17:18:15+09:00
 ---
 
 # Tally enquiry activation
 
-The single integration setting is `TALLY_FORM_ID`. An empty value builds the local validation preview; a valid alphanumeric ID builds a Tally iframe and a direct `tally.so/r/{ID}` fallback. A malformed value stops the build. This is build-time public configuration, not a secret.
+The owner-supplied public form ID `6DDMge` is the ordinary-build default. `TALLY_FORM_ID` can override that default; an explicit empty value builds the local validation preview, a valid alphanumeric ID builds a Tally iframe and direct `tally.so/r/{ID}` fallback, and a malformed value stops the build. This is public build configuration, not a secret.
+
+The published form view contains all 12 mapped fields and required states, including English/French and the three call choices. This integration work did not submit the form or verify its Tally account recipient, notifications, privacy wording, confirmation behavior or actual delivery; those remain owner checks.
 
 Activating Tally replaces the current custom preview with a Tally iframe. The same fields can be recreated in Tally, but the iframe does not reuse the preview's HTML or styles, so exact visual parity is not automatic. Tally provides embeds for free and includes theme, color and Google Font choices in its free customization options; [custom CSS](https://tally.so/help/add-custom-styles) and [removing Tally branding](https://tally.so/help/embed-your-form) require Tally Pro. See Tally's [customization FAQ](https://tally.so/help/faq) for the current plan distinctions.
 
@@ -31,15 +33,17 @@ Create these fields in Tally with the displayed labels and required state. The k
 | `anything_else` | Anything else I should know? | Long answer | No |
 | `call_preference` | Would you like a call to talk it through? | Multiple choice | No |
 
-## Activate
+## Build modes and verification
 
-1. Complete the form's recipient, privacy wording and confirmation message in Tally, then publish it.
-2. In Tally's **Share** tab, select a standard embed and copy the form ID from the published URL or embed. Tally documents the current flow in [Embed your form](https://tally.so/help/embed-your-form).
-3. Build with only the ID, not a URL: `TALLY_FORM_ID=abc123 pnpm build`.
-4. Run `pnpm test`; its isolated configured-render test uses a harmless fixture ID, never submits data and leaves any existing configured `dist/` unchanged. An exported `TALLY_FORM_ID` does not alter the test fixtures.
-5. Preview the real configured build and verify both the iframe and hosted-form fallback before deployment.
+1. Run `pnpm build` to use the supplied `6DDMge` form.
+2. To use a different approved published form, build with only its ID, not a URL: `TALLY_FORM_ID=abc123 pnpm build`.
+3. For explicit local review without a live form, run `TALLY_FORM_ID= pnpm build`. The resulting preview validates fields locally and sends nothing.
+4. Run `pnpm test`; its isolated checks cover the default ID, an override, explicit empty preview and malformed configuration without submitting data or changing an existing configured `dist/`.
+5. Before production, verify both the responsive iframe and hosted-form fallback, then confirm the owner-side recipient, notification, privacy and confirmation settings in Tally.
 
-For Dokploy, set `TALLY_FORM_ID` under Docker **Build Time Arguments** and redeploy. Changing the ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside the published form.
+The configured pages use Tally's official widget script and `dynamicHeight=1` embed option so the iframe follows the form across viewport sizes and form pages. The host page does not style the cross-origin form. See Tally's [embed guide](https://tally.so/help/embed-your-form) and [widget embed documentation](https://developers.tally.so/widgets/embeds).
+
+For Dokploy, leave `TALLY_FORM_ID` unset to use the Docker default, set another approved ID under Docker **Build Time Arguments** to override it, or set an explicit empty value for preview mode. Changing the mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside the published form.
 
 ## Privacy behavior
 

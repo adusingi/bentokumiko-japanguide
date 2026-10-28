@@ -6,7 +6,7 @@ import { renderEnquiry } from "./src/components/enquiry.mjs";
 import { renderLayout } from "./src/components/layout.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
-const tallyFormId = process.env.TALLY_FORM_ID || "";
+const tallyFormId = process.env.TALLY_FORM_ID ?? "6DDMge";
 
 if (tallyFormId && !/^[A-Za-z0-9]+$/.test(tallyFormId)) {
   throw new Error("TALLY_FORM_ID must contain only letters and numbers (for example: wA2xyz). Build stopped.");
@@ -54,8 +54,10 @@ await cp(path.join(root, "cloudflare/_redirects"), path.join(output, "_redirects
 
 for (const [page, metadata] of Object.entries(pages)) {
   let body = await readFile(path.join(root, `src/pages/${page}.html`), "utf8");
+  const hasEnquiryForm = body.includes("{{ENQUIRY_FORM}}");
   body = body.replaceAll("{{ENQUIRY_FORM}}", renderEnquiry(tallyFormId));
-  const html = renderLayout({ page, body, ...metadata, tallyEnabled: Boolean(tallyFormId) });
+  const enquiryMode = hasEnquiryForm ? (tallyFormId ? "tally" : "preview") : null;
+  const html = renderLayout({ page, body, ...metadata, enquiryMode });
   await writeFile(path.join(output, `${page}.html`), html);
 }
 

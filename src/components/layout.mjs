@@ -11,7 +11,7 @@ function navLink([href, label, page], current, footer = false) {
   return `<a href="${href}"${className}${selected}>${label}</a>`;
 }
 
-export function renderLayout({ page, title, description, body, tallyEnabled = false }) {
+export function renderLayout({ page, title, description, body, enquiryMode = null }) {
   const canonical = page === "index" ? "https://bentokumiko.com/" : `https://bentokumiko.com/${page}.html`;
   const enquiryCurrent = page === "enquire" ? ' current" aria-current="page' : "";
   return `<!doctype html>
@@ -62,7 +62,8 @@ export function renderLayout({ page, title, description, body, tallyEnabled = fa
   </footer>
   <script src="/assets/scripts/site.js" defer></script>
   ${page === "index" ? '<script src="/assets/scripts/testimonial-popup.js" defer></script>' : ""}
-  ${tallyEnabled ? "" : '<script src="/assets/scripts/enquiry-preview.js" defer></script>'}
+  ${enquiryMode === "tally" ? '<script src="https://tally.so/widgets/embed.js" defer></script>\n  <script src="/assets/scripts/tally-embed.js" defer></script>' : ""}
+  ${enquiryMode === "preview" ? '<script src="/assets/scripts/enquiry-preview.js" defer></script>' : ""}
 </body>
 </html>\n`;
 }

@@ -18,8 +18,7 @@ export function renderEnquiry(tallyFormId) {
     const embedUrl = `https://tally.so/embed/${tallyFormId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
     const hostedUrl = `https://tally.so/r/${tallyFormId}`;
     return `<div class="form-card tally-card" data-form-mode="tally">
-        <p class="form-status live-status"><strong>Enquiry form:</strong> your answers are sent securely through Tally when you submit.</p>
-        <iframe class="tally-frame" src="${embedUrl}" title="Japan trip enquiry" loading="lazy"></iframe>
+        <iframe class="tally-frame" data-tally-src="${embedUrl}" title="Japan trip enquiry" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
         <p class="f-note">If the form does not load, <a href="${hostedUrl}">open the enquiry form directly on Tally</a>.</p>
       </div>`;
   }

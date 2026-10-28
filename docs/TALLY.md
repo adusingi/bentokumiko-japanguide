@@ -3,12 +3,14 @@ type: Guide
 title: "Tally enquiry activation"
 description: "Field mapping, build setting and verification steps for the live Tally enquiry form."
 tags: [bento-kumiko, tally, forms]
-timestamp: 2026-10-28T00:15:27+09:00
+timestamp: 2026-10-28T17:08:37+09:00
 ---
 
 # Tally enquiry activation
 
 The single integration setting is `TALLY_FORM_ID`. An empty value builds the local validation preview; a valid alphanumeric ID builds a Tally iframe and a direct `tally.so/r/{ID}` fallback. A malformed value stops the build. This is build-time public configuration, not a secret.
+
+Activating Tally replaces the current custom preview with a Tally iframe. The same fields can be recreated in Tally, but the iframe does not reuse the preview's HTML or styles, so exact visual parity is not automatic. Tally provides embeds for free and includes theme, color and Google Font choices in its free customization options; [custom CSS](https://tally.so/help/add-custom-styles) and [removing Tally branding](https://tally.so/help/embed-your-form) require Tally Pro. See Tally's [customization FAQ](https://tally.so/help/faq) for the current plan distinctions.
 
 ## Create and map the published form
 

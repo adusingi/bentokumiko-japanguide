@@ -49,6 +49,8 @@ await mkdir(path.join(output, "assets"), { recursive: true });
 await cp(path.join(root, "src/assets"), path.join(output, "assets"), { recursive: true });
 await mkdir(path.join(output, "assets/styles"), { recursive: true });
 await cp(path.join(root, "src/styles"), path.join(output, "assets/styles"), { recursive: true });
+await cp(path.join(root, "cloudflare/_headers"), path.join(output, "_headers"));
+await cp(path.join(root, "cloudflare/_redirects"), path.join(output, "_redirects"));
 
 for (const [page, metadata] of Object.entries(pages)) {
   let body = await readFile(path.join(root, `src/pages/${page}.html`), "utf8");

@@ -21,4 +21,5 @@ jobs:
           install: false
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
+      - run: pnpm cloudflare:dry-run
       - run: docker build --build-arg TALLY_FORM_ID=abc123 --tag bento-kumiko-check .

@@ -1,0 +1,27 @@
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://tally.so; frame-src https://tally.so; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/
+  Cache-Control: no-cache
+
+/*.html
+  Cache-Control: no-cache
+
+/health
+  Cache-Control: no-cache
+
+/assets/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/styles/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/assets/scripts/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/assets/favicon.svg
+  Cache-Control: public, max-age=3600, must-revalidate

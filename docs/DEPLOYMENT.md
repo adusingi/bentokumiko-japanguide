@@ -1,14 +1,14 @@
 ---
 type: Guide
 title: "Bento Kumiko deployment"
-description: "Dokploy Dockerfile deployment, domain, configuration and rollback guide."
-tags: [bento-kumiko, dokploy, deployment]
-timestamp: 2026-10-27T23:29:33+09:00
+description: "Dokploy and Cloudflare deployment paths, branch ownership, configuration and rollback guide."
+tags: [bento-kumiko, dokploy, cloudflare, deployment]
+timestamp: 2026-10-28T16:32:33+09:00
 ---
 
 # Deployment
 
-The production image builds the static site with Node and serves it from nginx on container port `8080`. `/health` returns `200 ok`; missing paths return the branded `404.html` with status 404.
+The site supports two independent hosting paths. The existing Docker image builds with Node and serves from nginx on container port `8080`. The prepared Cloudflare Workers path uploads only generated static assets from `dist/`; it has no Worker script or database binding. Both preserve `/health`, explicit `.html` links and the branded 404 response.
 
 ## Dokploy application
 
@@ -22,8 +22,12 @@ The nginx Content Security Policy permits the configured Tally frame and Google 
 
 ## Branch and release flow
 
-Use `development` for owner review and Tally/photo/content checks. Promote the accepted commit to `main`, then deploy production from `main`. GitHub Actions runs static and Docker builds on both branches.
+Use only `development` and `main` on GitHub. Keep a private repository unless the owner deliberately chooses otherwise, make `main` the default and production branch, and use `development` for owner review and preview builds. Promote an accepted `development` commit to `main`; do not deploy an unreviewed development commit. GitHub Actions runs static checks, an offline Wrangler deployment dry run and the Docker build on both branches.
+
+## Cloudflare Workers Static Assets
+
+The local Wrangler configuration is preparation only: it contains no routes or custom domains and cannot take over `bentokumiko.com` by itself. Before any remote setup or DNS change, follow the [Cloudflare and OVH preparation guide](/docs/CLOUDFLARE.md). That guide records the exact Git integration settings, local checks, DNS/mail preservation sequence, domain cutover and optional future D1 limits.
 
 ## Rollback
 
-Record the last accepted commit or successful Dokploy deployment before promotion. If verification fails, redeploy that known-good deployment in Dokploy or select its commit and rebuild. Recheck `/health`, homepage, enquiry mode and a 404 after rollback. Configuration is baked into the image, so roll back the image/deployment and its matching build arguments together.
+Record the last accepted commit and successful deployment before promotion. For Dokploy, redeploy the known-good deployment or rebuild its commit with the matching build arguments. For Cloudflare, roll back to the prior Worker deployment or redeploy the known-good commit; DNS rollback is a separate, deliberately reviewed operation described in the [Cloudflare guide](/docs/CLOUDFLARE.md). Recheck `/health`, homepage, explicit page URLs, enquiry mode and a 404 after either rollback.

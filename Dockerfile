@@ -1,10 +1,11 @@
 FROM node:22-alpine AS builder
 WORKDIR /site
-COPY package.json pnpm-lock.yaml build.mjs ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml build.mjs ./
 RUN npm install --global "$(node --print 'require("./package.json").packageManager')"
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod
 COPY lib ./lib
 COPY src ./src
+COPY cloudflare ./cloudflare
 ARG TALLY_FORM_ID=""
 ENV TALLY_FORM_ID=$TALLY_FORM_ID
 RUN pnpm build

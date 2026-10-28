@@ -78,7 +78,7 @@ async function inspectSite(directory, expectedMode) {
   const files = await filesRecursively(directory);
   const relativeFiles = new Set(files.map((file) => path.relative(directory, file)));
   const topLevel = (await readdir(directory)).sort();
-  const expectedTopLevel = ["404.html", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "sitemap.xml"].sort();
+  const expectedTopLevel = ["404.html", "_headers", "_redirects", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "sitemap.xml"].sort();
   assert(JSON.stringify(topLevel) === JSON.stringify(expectedTopLevel), `Unexpected output boundary: ${topLevel.join(", ")}`);
   const htmlByPage = new Map();
 
@@ -132,7 +132,19 @@ async function inspectSite(directory, expectedMode) {
   assert(relativeFiles.has("robots.txt"), "Missing robots.txt");
   assert(relativeFiles.has("sitemap.xml"), "Missing sitemap.xml");
   assert(relativeFiles.has("health"), "Missing health endpoint file");
+  const headers = await readFile(path.join(directory, "_headers"), "utf8");
+  const redirects = await readFile(path.join(directory, "_redirects"), "utf8");
+  assert(headers.includes("Content-Security-Policy:"), "Cloudflare security headers are missing");
+  assert(headers.includes("/assets/images/*\n  Cache-Control: public, max-age=31536000, immutable"), "Cloudflare image caching is not immutable");
+  assert(redirects.trim() === "/ /index.html 200", "Cloudflare root rewrite is missing or too broad");
 }
+
+const wrangler = JSON.parse(await readFile(path.join(root, "wrangler.jsonc"), "utf8"));
+assert(wrangler.assets?.directory === "./dist", "Wrangler must upload only dist");
+assert(wrangler.assets?.html_handling === "none", "Wrangler must preserve explicit .html paths");
+assert(wrangler.assets?.not_found_handling === "404-page", "Wrangler must serve the branded 404 page");
+assert(!("main" in wrangler), "Static-only deployment unexpectedly has a Worker script");
+assert(!("routes" in wrangler), "Wrangler config must not claim live domains");
 
 const testRoot = await mkdtemp(path.join(os.tmpdir(), "bento-check-"));
 const distBefore = await snapshotDirectory(path.join(root, "dist"));

@@ -135,7 +135,6 @@
     margin:0 0 14px; max-width:24em;
   }
   .big-quote::before{content:"“"; color:var(--red)}
-  .complete-quote::after{content:"”"; color:var(--red)}
   .attribution{color:var(--faint); font-size:14.5px; margin-bottom:30px}
   .highlights{display:grid; grid-template-columns:1fr 1fr; gap:6px 40px; margin:0 0 30px; padding:0; list-style:none}
   .highlights li{padding:10px 0 10px 26px; position:relative; color:var(--soft); border-bottom:1px solid var(--line)}
@@ -150,9 +149,18 @@
   .lesson h3{margin:2px 0 6px; font-size:19px}
   .lesson p{margin:0; color:var(--soft)}
   @media (max-width:600px){ .lesson{grid-template-columns:1fr} }
-  .guest-quote-secondary{margin:0; padding-top:36px; border-top:1px solid var(--line)}
-  .pending-note{margin:28px 0 0; padding:18px 20px; border:1px dashed var(--line); border-radius:12px; color:var(--soft)}
-  .pending-note strong{color:var(--ink)}
+  .guest-cards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:40px}
+  .guest-card{margin:0; padding:28px 26px; background:var(--tint); border:1px dashed var(--faint); border-radius:14px; display:flex; flex-direction:column}
+  .guest-card blockquote{margin:0}
+  .guest-stars{color:var(--red); font-size:18px; line-height:1; letter-spacing:.14em; margin-bottom:20px}
+  .guest-card-copy{font-family:"Shippori Mincho B1",serif; font-size:clamp(17px,2vw,19px); font-style:italic; font-weight:500; line-height:1.72; color:var(--ink); margin:0 0 26px}
+  .guest-card-pending{color:var(--soft)}
+  .guest-card-credit{margin-top:auto; font-style:normal}
+  .guest-card-credit strong,.guest-card-credit span{display:block}
+  .guest-card-credit strong{font-size:15px; color:var(--ink); margin-bottom:6px}
+  .guest-card-credit span{font-size:13.5px; color:var(--faint); line-height:1.5}
+  @media (max-width:760px){ .guest-cards{grid-template-columns:1fr} }
+  @media (max-width:430px){ .guest-card{padding:24px 20px} }
 
   /* enquire */
   .enquire{

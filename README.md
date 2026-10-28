@@ -3,12 +3,12 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Build, preview and ownership guide for the Bento Kumiko static website."
 tags: [bento-kumiko, website, operations]
-timestamp: 2026-10-28T00:15:27+09:00
+timestamp: 2026-10-28T09:06:46+09:00
 ---
 
 # Bento Kumiko website
 
-A dependency-free static build preserving the supplied Bento Kumiko design and copy. Shared layout and form components build seven pages into `dist/`; nginx serves that output in production.
+A dependency-free static build preserving the supplied Bento Kumiko design and copy. Shared layout and form components build six pages into `dist/`; nginx serves that output in production.
 
 ## Work locally
 

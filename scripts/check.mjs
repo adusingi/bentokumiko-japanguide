@@ -9,7 +9,7 @@ import { enquiryFields } from "../src/components/enquiry.mjs";
 import { createPreviewServer } from "./serve.mjs";
 
 const root = process.cwd();
-const requiredPages = ["index", "about", "service", "testimonials", "blog", "enquire", "404"];
+const requiredPages = ["index", "about", "service", "blog", "enquire", "404"];
 let assertions = 0;
 
 function assert(condition, message) {
@@ -78,7 +78,7 @@ async function inspectSite(directory, expectedMode) {
   const files = await filesRecursively(directory);
   const relativeFiles = new Set(files.map((file) => path.relative(directory, file)));
   const topLevel = (await readdir(directory)).sort();
-  const expectedTopLevel = ["404.html", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "sitemap.xml", "testimonials.html"].sort();
+  const expectedTopLevel = ["404.html", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "sitemap.xml"].sort();
   assert(JSON.stringify(topLevel) === JSON.stringify(expectedTopLevel), `Unexpected output boundary: ${topLevel.join(", ")}`);
   const htmlByPage = new Map();
 
@@ -114,6 +114,10 @@ async function inspectSite(directory, expectedMode) {
   const index = htmlByPage.get("index");
   const enquire = htmlByPage.get("enquire");
   const blog = htmlByPage.get("blog");
+  for (const [page, html] of htmlByPage) {
+    assert(html.includes('href="/index.html#testimonials"'), `${page}.html navigation does not link to homepage testimonials`);
+    assert(!html.includes('href="/testimonials.html"'), `${page}.html still links to the removed testimonials page`);
+  }
   assert(!index.includes('id="blog"'), "Homepage still contains the removed blog section");
   assert(!index.includes("Five tips from my recent guests"), "Homepage still contains blog editorial copy");
   assert(blog.includes("5 things our guests learned in Japan"), "Blog page lost the supplied guest tips");

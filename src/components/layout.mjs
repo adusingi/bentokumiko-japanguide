@@ -1,14 +1,14 @@
 const navigation = [
-  ["about", "About"],
-  ["service", "Service"],
-  ["testimonials", "Testimonials"],
-  ["blog", "Blog"],
+  ["/about.html", "About", "about"],
+  ["/service.html", "Service", "service"],
+  ["/index.html#testimonials", "Testimonials"],
+  ["/blog.html", "Blog", "blog"],
 ];
 
-function navLink([slug, label], current, footer = false) {
-  const selected = slug === current ? ' aria-current="page"' : "";
+function navLink([href, label, page], current, footer = false) {
+  const selected = page === current ? ' aria-current="page"' : "";
   const className = !footer && selected ? ' class="current"' : "";
-  return `<a href="/${slug}.html"${className}${selected}>${label}</a>`;
+  return `<a href="${href}"${className}${selected}>${label}</a>`;
 }
 
 export function renderLayout({ page, title, description, body, tallyEnabled = false }) {

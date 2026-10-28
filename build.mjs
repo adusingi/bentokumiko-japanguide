@@ -25,10 +25,6 @@ const pages = {
     title: "Custom Japan Itinerary Service | Bento Kumiko",
     description: "A personal Japan itinerary with stays, transport, day-by-day plans and an illustrative budget, delivered as a travel book and app.",
   },
-  testimonials: {
-    title: "Guest Stories | Bento Kumiko — Japan Travel Planner",
-    description: "Real guest feedback from a Japan trip planned by Kumiko, with honest notes about what she learned and improved.",
-  },
   blog: {
     title: "Blog | Bento Kumiko — Japan Travel Planner",
     description: "Personal Japan travel notes, practical guest lessons and places Kumiko has visited in Kyoto, Osaka, Kumamoto and Nagano.",

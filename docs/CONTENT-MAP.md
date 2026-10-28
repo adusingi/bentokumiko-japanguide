@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko content map"
 description: "Ownership map for pages, shared copy, assets and content awaiting approval."
 tags: [bento-kumiko, content, website]
-timestamp: 2026-10-28T09:06:46+09:00
+timestamp: 2026-10-28T17:37:35+09:00
 ---
 
 # Content map
@@ -19,6 +19,10 @@ timestamp: 2026-10-28T09:06:46+09:00
 
 Shared navigation, metadata and footer live in `src/components/layout.mjs`. Shared enquiry fields live in `src/components/enquiry.mjs`; their external mapping is in [Tally activation](/docs/TALLY.md). Extracted photographs are content-addressed in `src/assets/images/` and retain their supplied alternative text in page sources.
 
+## Owner content decisions
+
+Kumiko has chosen not to use a personal portrait on the website, so no portrait or portrait placeholder is planned. Existing Japan travel photographs remain part of the supplied page content.
+
 ## Pending owner content
 
-Kumiko's portrait, final service pricing and Lee's approved testimonial wording remain intentionally absent. The public pages label their current state rather than inventing replacements. See the [owner checklist](/docs/TOMORROW.md).
+Final service pricing and Lee's approved testimonial wording remain intentionally absent. The public pages label their current state rather than inventing replacements. See the [owner checklist](/docs/TOMORROW.md).

@@ -51,24 +51,13 @@
   .sec-head p{color:var(--soft); margin:0}
 
   /* meet */
-  .meet{display:grid; grid-template-columns:.9fr 1.1fr; gap:48px; align-items:center}
-  .photo-slot{
-    border:1.5px dashed var(--faint); border-radius:16px; background:var(--tint);
-    aspect-ratio:4/4.4; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:28px; gap:8px; position:relative; overflow:hidden;
-  }
-  .photo-slot .hanko{width:58px; height:58px; font-size:29px; border-radius:10px; margin-bottom:8px}
-  .photo-slot b{font-family:"Shippori Mincho B1",serif; font-size:20px}
-  .photo-slot p{margin:0; color:var(--faint); font-size:14.5px; max-width:26em}
-  .photo-slot .corner{position:absolute; font-family:"Shippori Mincho B1",serif; color:var(--faint); opacity:.55; font-size:15px; letter-spacing:.3em}
-  .photo-slot .c1{top:14px; left:16px}.photo-slot .c2{bottom:12px; right:16px}
+  .meet-text{max-width:720px}
   .meet-text p{color:var(--soft); margin:0 0 16px}
   .meet-text p strong{color:var(--ink)}
   .chips{display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 22px}
   .chip{border:1px solid var(--line); background:var(--bg); border-radius:999px; padding:6px 14px; font-size:13.5px; font-weight:500; color:var(--soft)}
   .chip b{color:var(--red); font-weight:700}
   .text-link{font-weight:700}
-  @media (max-width:860px){ .meet{grid-template-columns:1fr} .photo-slot{aspect-ratio:4/3} }
 
   /* what I do */
   .do-list{border-top:1px solid var(--line)}

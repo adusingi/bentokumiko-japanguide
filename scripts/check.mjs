@@ -114,9 +114,11 @@ async function inspectSite(directory, expectedMode) {
   const index = htmlByPage.get("index");
   const enquire = htmlByPage.get("enquire");
   const blog = htmlByPage.get("blog");
+  const testimonialPopupScript = 'src="/assets/scripts/testimonial-popup.js"';
   for (const [page, html] of htmlByPage) {
     assert(html.includes('href="/index.html#testimonials"'), `${page}.html navigation does not link to homepage testimonials`);
     assert(!html.includes('href="/testimonials.html"'), `${page}.html still links to the removed testimonials page`);
+    assert((page === "index") === html.includes(testimonialPopupScript), `${page}.html has the wrong testimonial popup script state`);
   }
   assert(!index.includes('id="blog"'), "Homepage still contains the removed blog section");
   assert(!index.includes("Five tips from my recent guests"), "Homepage still contains blog editorial copy");

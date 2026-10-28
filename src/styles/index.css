@@ -150,17 +150,45 @@
   .lesson p{margin:0; color:var(--soft)}
   @media (max-width:600px){ .lesson{grid-template-columns:1fr} }
   .guest-cards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:40px}
-  .guest-card{margin:0; padding:28px 26px; background:var(--tint); border:1px dashed var(--faint); border-radius:14px; display:flex; flex-direction:column}
-  .guest-card blockquote{margin:0}
-  .guest-stars{color:var(--red); font-size:18px; line-height:1; letter-spacing:.14em; margin-bottom:20px}
+  .guest-card{margin:0; min-width:0; padding:28px 26px; background:var(--tint); border:1px dashed var(--faint); border-radius:14px; display:flex; flex-direction:column}
+  .guest-card-real{position:relative}
+  .guest-card-real.testimonial-popup-ready,.guest-card-lee{height:230px}
+  .guest-card-quote{margin:0}
+  .guest-card-preview{position:relative}
+  .guest-stars{color:var(--red); font-size:18px; line-height:1; letter-spacing:.14em; margin-bottom:18px}
   .guest-card-copy{font-family:"Shippori Mincho B1",serif; font-size:clamp(17px,2vw,19px); font-style:italic; font-weight:500; line-height:1.72; color:var(--ink); margin:0 0 26px}
+  .testimonial-popup-ready .guest-card-copy{display:-webkit-box; margin:0; overflow:hidden; text-overflow:ellipsis; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2}
+  .guest-card-trigger{display:none}
+  .testimonial-popup-ready .guest-card-trigger{display:block; position:relative; z-index:1; align-self:flex-start; width:100%; margin-top:7px; padding:0; border:0; border-radius:6px; background:transparent; color:var(--red-deep); font:inherit; font-size:11px; font-weight:700; letter-spacing:.08em; line-height:1.5; text-align:left; text-transform:uppercase; cursor:pointer}
+  .testimonial-popup-ready .guest-card-trigger::before{content:""; position:absolute; top:-72px; right:0; bottom:0; left:0}
+  .testimonial-popup-ready .guest-card-trigger:focus-visible{outline:3px solid var(--red); outline-offset:3px}
+  .testimonial-popup-ready:hover .guest-card-trigger,.testimonial-popup-ready:focus-within .guest-card-trigger{text-decoration:underline; text-underline-offset:3px}
   .guest-card-pending{color:var(--soft)}
   .guest-card-credit{margin-top:auto; font-style:normal}
   .guest-card-credit strong,.guest-card-credit span{display:block}
   .guest-card-credit strong{font-size:15px; color:var(--ink); margin-bottom:6px}
   .guest-card-credit span{font-size:13.5px; color:var(--faint); line-height:1.5}
+  .testimonial-popup-layer{position:fixed; inset:0; z-index:100; pointer-events:none}
+  .testimonial-popup{position:fixed; z-index:101; visibility:hidden; width:min(520px,calc(100vw - 32px)); max-height:calc(100vh - 32px); max-height:calc(100dvh - 32px); padding:26px; overflow:auto; border:1px solid var(--line); border-radius:16px; background:var(--bg); box-shadow:0 24px 70px rgba(33,26,20,.24); pointer-events:auto}
+  .testimonial-popup.is-positioned{visibility:visible}
+  .testimonial-popup-header{display:flex; gap:18px; align-items:flex-start; justify-content:space-between; margin-bottom:18px}
+  .testimonial-popup-eyebrow{margin:0 0 8px; color:var(--red); font-size:12px; font-weight:700; letter-spacing:.14em; line-height:1.4; text-transform:uppercase}
+  .testimonial-popup-header h2{margin:0; font-size:22px}
+  .testimonial-popup-close{display:grid; flex:0 0 44px; place-items:center; width:44px; height:44px; padding:0; border:1px solid var(--line); border-radius:50%; background:var(--bg); color:var(--ink); font:inherit; font-size:25px; line-height:1; cursor:pointer}
+  .testimonial-popup-stars{margin-bottom:18px; color:var(--red); font-size:18px; line-height:1; letter-spacing:.14em}
+  .testimonial-popup blockquote{margin:0}
+  .testimonial-popup-quote{margin:0 0 20px; color:var(--ink); font-family:"Shippori Mincho B1",serif; font-size:clamp(17px,2.2vw,20px); font-style:italic; line-height:1.72}
+  .testimonial-popup-context{margin:0; color:var(--faint); font-size:13.5px}
   @media (max-width:760px){ .guest-cards{grid-template-columns:1fr} }
-  @media (max-width:430px){ .guest-card{padding:24px 20px} }
+  @media (max-width:430px){
+    .guest-card{padding:24px 20px}
+    .guest-card-real.testimonial-popup-ready,.guest-card-lee{height:220px}
+    .testimonial-popup{padding:22px 20px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .testimonial-popup{animation:testimonial-popup-in .16s ease-out}
+    @keyframes testimonial-popup-in{from{opacity:0; transform:translateY(8px) scale(.985)}to{opacity:1; transform:none}}
+  }
 
   /* enquire */
   .enquire{

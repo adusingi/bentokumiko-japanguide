@@ -61,6 +61,7 @@ export function renderLayout({ page, title, description, body, tallyEnabled = fa
     </div>
   </footer>
   <script src="/assets/scripts/site.js" defer></script>
+  ${page === "index" ? '<script src="/assets/scripts/testimonial-popup.js" defer></script>' : ""}
   ${tallyEnabled ? "" : '<script src="/assets/scripts/enquiry-preview.js" defer></script>'}
 </body>
 </html>\n`;

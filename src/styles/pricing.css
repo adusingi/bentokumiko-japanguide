@@ -1,0 +1,176 @@
+/* Scoped pricing components shared by the Home and Service pages. */
+.bk-pricing-grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.bk-pricing-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 26px 22px;
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg);
+}
+
+.bk-pricing-card--featured {
+  border-color: var(--red);
+  box-shadow: 0 12px 32px rgba(188, 51, 21, .1);
+}
+
+.bk-pricing-card--service { margin-top: 36px; }
+.bk-pricing-label,
+.bk-shopping__label {
+  margin: 0;
+  color: var(--red);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.bk-pricing-card h2,
+.bk-pricing-card h3 {
+  margin: 8px 0 4px;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.bk-pricing-price {
+  margin: 14px 0 4px;
+  color: var(--ink);
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+
+.bk-pricing-price small { font-size: 18px; }
+.bk-pricing-sub {
+  margin: 0;
+  color: var(--red);
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.bk-pricing-checklist {
+  margin: 20px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.bk-pricing-checklist li {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 7px 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.bk-pricing-checklist li::before {
+  content: "✓";
+  flex: 0 0 auto;
+  color: var(--red);
+  font-weight: 700;
+}
+
+.bk-pricing-note {
+  margin: 18px 0 20px;
+  color: var(--soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.bk-pricing-card .btn {
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.bk-shopping {
+  display: grid;
+  margin-top: 84px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--bg);
+}
+
+.bk-shopping__text { padding: 32px 24px 28px; }
+.bk-shopping__text h2 {
+  margin: 10px 0 16px;
+  font-size: clamp(29px, 4vw, 38px);
+}
+
+.bk-shopping__text p {
+  max-width: 56em;
+  margin: 0 0 14px;
+  color: var(--soft);
+}
+
+.bk-shopping__text p strong { color: var(--ink); }
+.bk-shopping__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 24px;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.bk-shopping__price .bk-shopping__label { color: #ffb199; }
+.bk-shopping__price .bk-shopping__amount {
+  margin: 14px 0 0;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.bk-shopping__amount small { font-size: 18px; }
+.bk-shopping__price h3 {
+  margin: 18px 0 10px;
+  color: var(--bg);
+  font-size: 21px;
+}
+
+.bk-shopping__price p {
+  margin: 0 0 14px;
+  font-size: 15.5px;
+  line-height: 1.7;
+  opacity: .86;
+}
+
+.bk-shopping__price ul {
+  width: 100%;
+  margin: 4px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.bk-shopping__price li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .22);
+  font-size: 15px;
+  opacity: .92;
+}
+
+.bk-shopping__price .btn { margin-top: auto; }
+
+@media (min-width: 720px) {
+  .bk-pricing-grid--home { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bk-pricing-card { padding: 30px 28px 28px; }
+  .bk-pricing-price { font-size: 56px; }
+}
+
+@media (min-width: 821px) {
+  .bk-shopping { grid-template-columns: 1.15fr .85fr; }
+  .bk-shopping__text { padding: 44px 42px 40px; }
+  .bk-shopping__price { padding: 44px 36px 40px; }
+}

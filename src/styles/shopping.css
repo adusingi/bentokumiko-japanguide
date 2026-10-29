@@ -1,0 +1,85 @@
+.shopping-intro {
+  padding-block-start: clamp(40px, 7vw, 68px);
+}
+
+.sec-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.sec-kicker .jp {
+  font-size: 14px;
+  letter-spacing: .2em;
+}
+
+.shopping-intro h1 {
+  max-width: 18em;
+  margin: 14px 0 22px;
+  font-size: clamp(34px, 5vw, 54px);
+  letter-spacing: -.01em;
+}
+
+.shopping-jp {
+  display: block;
+  margin-top: 5px;
+  color: var(--red);
+  font-size: .6em;
+  letter-spacing: .08em;
+}
+
+.shopping-copy {
+  max-width: 760px;
+  color: var(--soft);
+  font-size: 18px;
+}
+
+.shopping-copy p {
+  margin: 0 0 18px;
+}
+
+.shopping-copy strong,
+.shopping-lede {
+  color: var(--ink);
+}
+
+.shopping-lede {
+  font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 700;
+}
+
+.shopping-form {
+  max-width: 880px;
+  margin-top: 34px;
+}
+
+.trip-enquiry-link {
+  max-width: 880px;
+  margin: 36px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.trip-enquiry-link a {
+  color: var(--red);
+  font-family: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 700;
+}
+
+.trip-enquiry-link a:hover {
+  color: var(--red);
+}
+
+@media (max-width: 430px) {
+  .shopping-intro h1 { font-size: 34px; }
+  .shopping-copy { font-size: 16px; }
+}

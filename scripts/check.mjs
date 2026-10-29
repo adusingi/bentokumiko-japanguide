@@ -9,7 +9,7 @@ import { enquiryFields } from "../src/components/enquiry.mjs";
 import { createPreviewServer } from "./serve.mjs";
 
 const root = process.cwd();
-const requiredPages = ["index", "about", "service", "blog", "enquire", "404"];
+const requiredPages = ["index", "about", "service", "blog", "enquire", "shopping", "404"];
 let assertions = 0;
 
 function assert(condition, message) {
@@ -80,7 +80,7 @@ async function inspectSite(directory, expectedMode) {
   const files = await filesRecursively(directory);
   const relativeFiles = new Set(files.map((file) => path.relative(directory, file)));
   const topLevel = (await readdir(directory)).sort();
-  const expectedTopLevel = ["404.html", "_headers", "_redirects", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "sitemap.xml"].sort();
+  const expectedTopLevel = ["404.html", "_headers", "_redirects", "about.html", "assets", "blog.html", "enquire.html", "health", "index.html", "robots.txt", "service.html", "shopping.html", "sitemap.xml"].sort();
   assert(JSON.stringify(topLevel) === JSON.stringify(expectedTopLevel), `Unexpected output boundary: ${topLevel.join(", ")}`);
   const htmlByPage = new Map();
 
@@ -115,19 +115,23 @@ async function inspectSite(directory, expectedMode) {
 
   const index = htmlByPage.get("index");
   const enquire = htmlByPage.get("enquire");
+  const shopping = htmlByPage.get("shopping");
   const blog = htmlByPage.get("blog");
   const testimonialPopupScript = 'src="/assets/scripts/testimonial-popup.js"';
   const tallyWidgetScript = 'src="https://tally.so/widgets/embed.js"';
   const tallyEmbedScript = 'src="/assets/scripts/tally-embed.js"';
   const enquiryPreviewScript = 'src="/assets/scripts/enquiry-preview.js"';
   for (const [page, html] of htmlByPage) {
-    const hasEnquiryForm = page === "index" || page === "enquire";
+    const hasTripEnquiryForm = page === "index" || page === "enquire";
+    const hasShoppingEnquiryForm = page === "shopping";
+    const usesTally = hasShoppingEnquiryForm || (expectedMode === "tally" && hasTripEnquiryForm);
+    const usesPreview = expectedMode === "preview" && hasTripEnquiryForm;
     assert(html.includes('href="/index.html#testimonials"'), `${page}.html navigation does not link to homepage testimonials`);
     assert(!html.includes('href="/testimonials.html"'), `${page}.html still links to the removed testimonials page`);
     assert((page === "index") === html.includes(testimonialPopupScript), `${page}.html has the wrong testimonial popup script state`);
-    assert((expectedMode === "tally" && hasEnquiryForm) === html.includes(tallyWidgetScript), `${page}.html has the wrong Tally widget script state`);
-    assert((expectedMode === "tally" && hasEnquiryForm) === html.includes(tallyEmbedScript), `${page}.html has the wrong Tally initializer state`);
-    assert((expectedMode === "preview" && hasEnquiryForm) === html.includes(enquiryPreviewScript), `${page}.html has the wrong enquiry preview script state`);
+    assert(usesTally === html.includes(tallyWidgetScript), `${page}.html has the wrong Tally widget script state`);
+    assert(usesTally === html.includes(tallyEmbedScript), `${page}.html has the wrong Tally initializer state`);
+    assert(usesPreview === html.includes(enquiryPreviewScript), `${page}.html has the wrong enquiry preview script state`);
   }
   assert(!index.includes('id="blog"'), "Homepage still contains the removed blog section");
   assert(!index.includes("Five tips from my recent guests"), "Homepage still contains blog editorial copy");
@@ -135,6 +139,7 @@ async function inspectSite(directory, expectedMode) {
   assert(blog.includes("My Japan, personally visited"), "Blog page lost the city content");
   assert(index.includes(`data-form-mode="${expectedMode}"`), `Homepage did not render ${expectedMode} form`);
   assert(enquire.includes(`data-form-mode="${expectedMode}"`), `Enquire page did not render ${expectedMode} form`);
+  assert(shopping.includes('data-form-mode="tally"'), "Shopping page did not render its Tally form");
   if (expectedMode === "preview") {
     for (const [key] of enquiryFields) assert(enquire.includes(`data-field="${key}"`), `Preview form lacks ${key}`);
   }
@@ -164,8 +169,14 @@ const defaultBuild = build({ SITE_OUTPUT_DIR: defaultDirectory });
 assert(defaultBuild.status === 0, `Default build failed: ${defaultBuild.stderr}`);
 await inspectSite(defaultDirectory, "tally");
 const defaultEnquire = await readFile(path.join(defaultDirectory, "enquire.html"), "utf8");
+const defaultShopping = await readFile(path.join(defaultDirectory, "shopping.html"), "utf8");
 assert(defaultEnquire.includes("https://tally.so/embed/6DDMge"), "Default build lacks the approved Tally form");
 assert(defaultEnquire.includes("https://tally.so/r/6DDMge"), "Default build lacks the approved hosted-form fallback");
+assert(defaultShopping.includes("https://tally.so/embed/Vpp72g"), "Shopping page lacks the approved Tally form");
+assert(defaultShopping.includes("https://tally.so/r/Vpp72g"), "Shopping page lacks the approved hosted-form fallback");
+assert(defaultShopping.includes('title="Shopping day enquiry"'), "Shopping Tally iframe lacks its accessible title");
+assert(!defaultShopping.includes("https://tally.so/embed/6DDMge"), "Shopping page uses the trip enquiry form");
+assert(!defaultEnquire.includes("https://tally.so/embed/Vpp72g"), "Trip enquiry page uses the shopping form");
 
 const previewDirectory = path.join(testRoot, "preview");
 const previewBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: previewDirectory });

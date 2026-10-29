@@ -7,6 +7,7 @@ import { renderLayout } from "./src/components/layout.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const tallyFormId = process.env.TALLY_FORM_ID ?? "6DDMge";
+const shoppingTallyFormId = "Vpp72g";
 
 if (tallyFormId && !/^[A-Za-z0-9]+$/.test(tallyFormId)) {
   throw new Error("TALLY_FORM_ID must contain only letters and numbers (for example: wA2xyz). Build stopped.");
@@ -33,6 +34,10 @@ const pages = {
     title: "Enquire | Bento Kumiko — Japan Travel Planner",
     description: "Share your Japan travel timing, party, interests, pace and rough budget with Kumiko in English or French.",
   },
+  shopping: {
+    title: "Shopping Day in Japan | Bento Kumiko",
+    description: "Book a personal shopping day with Kumiko in Kyoto, Osaka, Hiroshima or Tokyo, with translation and local guidance.",
+  },
   "404": {
     title: "Page not found | Bento Kumiko",
     description: "The requested Bento Kumiko page could not be found.",
@@ -55,8 +60,13 @@ await cp(path.join(root, "cloudflare/_redirects"), path.join(output, "_redirects
 for (const [page, metadata] of Object.entries(pages)) {
   let body = await readFile(path.join(root, `src/pages/${page}.html`), "utf8");
   const hasEnquiryForm = body.includes("{{ENQUIRY_FORM}}");
+  const hasShoppingEnquiryForm = body.includes("{{SHOPPING_ENQUIRY_FORM}}");
   body = body.replaceAll("{{ENQUIRY_FORM}}", renderEnquiry(tallyFormId));
-  const enquiryMode = hasEnquiryForm ? (tallyFormId ? "tally" : "preview") : null;
+  body = body.replaceAll("{{SHOPPING_ENQUIRY_FORM}}", renderEnquiry(shoppingTallyFormId, {
+    iframeTitle: "Shopping day enquiry",
+    fallbackLinkText: "open the shopping enquiry form directly on Tally",
+  }));
+  const enquiryMode = hasShoppingEnquiryForm ? "tally" : hasEnquiryForm ? (tallyFormId ? "tally" : "preview") : null;
   const html = renderLayout({ page, body, ...metadata, enquiryMode });
   await writeFile(path.join(output, `${page}.html`), html);
 }

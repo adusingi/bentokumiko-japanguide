@@ -13,13 +13,16 @@ export const enquiryFields = [
   ["call_preference", "Call preference", "optional"],
 ];
 
-export function renderEnquiry(tallyFormId) {
+export function renderEnquiry(tallyFormId, {
+  iframeTitle = "Japan trip enquiry",
+  fallbackLinkText = "open the enquiry form directly on Tally",
+} = {}) {
   if (tallyFormId) {
     const embedUrl = `https://tally.so/embed/${tallyFormId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
     const hostedUrl = `https://tally.so/r/${tallyFormId}`;
     return `<div class="form-card tally-card" data-form-mode="tally">
-        <iframe class="tally-frame" data-tally-src="${embedUrl}" title="Japan trip enquiry" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
-        <p class="f-note">If the form does not load, <a href="${hostedUrl}">open the enquiry form directly on Tally</a>.</p>
+        <iframe class="tally-frame" data-tally-src="${embedUrl}" title="${iframeTitle}" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+        <p class="f-note">If the form does not load, <a href="${hostedUrl}">${fallbackLinkText}</a>.</p>
       </div>`;
   }
 

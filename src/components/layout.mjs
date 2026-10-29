@@ -1,6 +1,7 @@
 const navigation = [
   ["/about.html", "About", "about"],
   ["/service.html", "Service", "service"],
+  ["/index.html#pricing", "Pricing"],
   ["/index.html#testimonials", "Testimonials"],
   ["/blog.html", "Blog", "blog"],
 ];

@@ -28,7 +28,7 @@ export function renderLayout({ page, title, description, body, enquiryMode = nul
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles/base.css" />
-  <link rel="stylesheet" href="/assets/styles/${page}.css" />
+    <link rel="stylesheet" href="/assets/styles/${page === "service" ? "service-offers" : page}.css" />
   <title>${title}</title>
 </head>
 <body data-page="${page}">
@@ -63,6 +63,7 @@ export function renderLayout({ page, title, description, body, enquiryMode = nul
   </footer>
   <script src="/assets/scripts/site.js" defer></script>
   ${page === "index" ? '<script src="/assets/scripts/testimonial-popup.js" defer></script>' : ""}
+  ${page === "service" ? '<script src="/assets/scripts/service-tabs.js" defer></script>' : ""}
   ${enquiryMode === "tally" ? '<script src="https://tally.so/widgets/embed.js" defer></script>\n  <script src="/assets/scripts/tally-embed.js" defer></script>' : ""}
   ${enquiryMode === "preview" ? '<script src="/assets/scripts/enquiry-preview.js" defer></script>' : ""}
 </body>

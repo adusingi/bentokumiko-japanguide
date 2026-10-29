@@ -23,8 +23,8 @@ const pages = {
     description: "Meet Kumiko, a Japan-based travel planner who creates personal, day-by-day Japan itineraries in English and French.",
   },
   service: {
-    title: "Custom Japan Itinerary Service | Bento Kumiko",
-    description: "A personal Japan itinerary with stays, transport, day-by-day plans and an illustrative budget, delivered as a travel book and app.",
+    title: "Japan Trip Planning & Shopping Assistance | Bento Kumiko",
+    description: "Choose personal Japan trip planning or a guided shopping day in Kyoto, Osaka, Hiroshima or Tokyo with Kumiko.",
   },
   blog: {
     title: "Blog | Bento Kumiko — Japan Travel Planner",

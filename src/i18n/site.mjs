@@ -60,7 +60,7 @@ export const pages = {
       },
       fr: {
         title: "Bento Kumiko — Voyage au Japon sur mesure",
-        description: "Kumiko prépare au Japon des itinéraires sur mesure, jour par jour, avec hébergements, transports et budget clair, livrés sous forme de carnet de voyage et d’application.",
+        description: "Kumiko prépare votre voyage au Japon, un itinéraire sur mesure, jour par jour, avec hébergements, transports et budget clair, livrés sous forme de carnet de voyage accompagné d’une application web.",
       },
     },
   },

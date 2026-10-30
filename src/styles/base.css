@@ -108,6 +108,19 @@ nav.main a:hover, nav.main a.current { color: var(--red); }
 }
 .language-switch a[aria-current="true"] { background: var(--ink); color: var(--bg); }
 .language-switch a:hover { color: var(--red); }
+.language-suggestion[hidden] { display: none; }
+.language-suggestion { border-bottom: 1px solid var(--line); background: var(--tint); }
+.language-suggestion-in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  padding-block: 7px;
+  color: var(--soft);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+.language-suggestion a { font-weight: 700; }
 .nav-toggle { display: none; background: none; border: 1px solid var(--line); border-radius: 10px; width: 44px; height: 44px; cursor: pointer; color: var(--ink); font-size: 19px; line-height: 1; }
 
 .btn {
@@ -189,18 +202,6 @@ footer .language-switch { align-self: center; }
 .form-result { border-left: 4px solid var(--red); background: var(--tint); color: var(--ink) !important; padding: 12px 14px; margin: 18px 0 0 !important; }
 .tally-frame { display: block; width: 100%; border: 0; border-radius: 12px; background: var(--bg); }
 .french-form-placeholder .form-status { margin-bottom: 0; }
-.translation-review-note {
-  margin: 0 0 22px;
-  padding: 12px 15px;
-  border: 2px solid var(--red);
-  border-radius: 10px;
-  background: var(--tint);
-}
-.translation-label { color: var(--red); font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.testimonial-original { margin: 20px 0 26px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; }
-.testimonial-original summary { color: var(--red); cursor: pointer; font-weight: 700; }
-.testimonial-original blockquote { margin: 12px 0 0; color: var(--soft); }
-.testimonial-original blockquote p { margin: 0; }
 
 @media (max-width: 1040px) {
   nav.main {
@@ -226,6 +227,7 @@ footer .language-switch { align-self: center; }
 }
 
 @media (max-width: 640px) {
+  .language-suggestion-in { align-items: flex-start; flex-direction: column; gap: 0; }
   .enquiry-form .f-grid { grid-template-columns: 1fr; }
 }
 

@@ -34,7 +34,6 @@ function build(environment = {}) {
     "TALLY_FORM_ID",
     "FRENCH_TALLY_FORM_ID",
     "FRENCH_SHOPPING_TALLY_FORM_ID",
-    "FRENCH_TESTIMONIAL_APPROVED",
     "REQUIRE_PRODUCTION_READY",
     "SITE_OUTPUT_DIR",
   ]) delete isolatedEnvironment[name];
@@ -194,7 +193,7 @@ function verifyServiceLanguageSwitch(siteScript, serviceTabsScript) {
     addEventListener(type, listener) { documentListeners.set(type, listener); },
   };
   class MockEvent { constructor(type) { this.type = type; } }
-  const context = { document, window, URL, Event: MockEvent };
+  const context = { document, window, navigator: { languages: ["en"], language: "en" }, Intl, URL, Event: MockEvent };
 
   runInNewContext(siteScript, context);
   runInNewContext(serviceTabsScript, context);
@@ -205,6 +204,60 @@ function verifyServiceLanguageSwitch(siteScript, serviceTabsScript) {
   location.hash = "#not-allowlisted";
   window.dispatchEvent(new MockEvent("bento:locationchange"));
   assert(alternateLink.href === "/fr/services.html", "Language switch preserved an arbitrary fragment");
+}
+
+function verifyLanguageSuggestion(siteScript) {
+  const cases = [
+    { label: "exact French", languages: ["fr"], language: "en", visible: true },
+    { label: "case-insensitive French region", languages: ["FR-ca"], language: "en", visible: true },
+    { label: "valid French numeric region", languages: ["fr-029"], language: "en", visible: true },
+    { label: "fallback French region", languages: [], language: "fr-FR", visible: true },
+    { label: "secondary French", languages: ["en", "fr"], language: "fr", visible: false },
+    { label: "unrelated language", languages: ["de-DE"], language: "fr", visible: false },
+    { label: "malformed French", languages: ["fr_FR"], language: "fr", visible: false },
+    { label: "French script without region", languages: ["fr-Latn"], language: "fr", visible: false },
+    { label: "unknown preference", languages: [], language: undefined, visible: false },
+  ];
+
+  for (const testCase of cases) {
+    const suggestion = { hidden: true };
+    const location = { href: `${siteOrigin}/about.html#history` };
+    const emptyClassList = class {
+      add() {}
+      remove() {}
+      contains() { return false; }
+      toggle() { return false; }
+    };
+    const header = { classList: new emptyClassList() };
+    const toggle = {
+      dataset: { openLabel: "Open menu", closeLabel: "Close menu" },
+      classList: new emptyClassList(),
+      addEventListener() {},
+      setAttribute() {},
+    };
+    const nav = { classList: new emptyClassList(), addEventListener() {} };
+    const context = {
+      document: {
+        body: { dataset: { preservedFragments: "" } },
+        getElementById(id) { return ({ siteHeader: header, navToggle: toggle, mainNav: nav })[id] || null; },
+        querySelector: (selector) => selector === "[data-language-suggestion]" ? suggestion : null,
+        querySelectorAll: () => [],
+        addEventListener() {},
+      },
+      navigator: { languages: testCase.languages, language: testCase.language },
+      window: {
+        location: { ...location, hash: "", origin: siteOrigin },
+        scrollY: 0,
+        matchMedia: () => ({ matches: true }),
+        addEventListener() {},
+      },
+      Intl,
+      URL,
+    };
+    runInNewContext(siteScript, context);
+    assert(suggestion.hidden === !testCase.visible, `Language suggestion handled ${testCase.label} incorrectly`);
+    assert(context.window.location.href === `${siteOrigin}/about.html#history`, `Language suggestion navigated for ${testCase.label}`);
+  }
 }
 
 async function inspectSite(directory, modes) {
@@ -279,6 +332,10 @@ async function inspectSite(directory, modes) {
       assert((mode === "tally") === html.includes(tallyWidgetScript), `${expected.output} has the wrong Tally widget state`);
       assert((mode === "tally") === html.includes(tallyEmbedScript), `${expected.output} has the wrong Tally initializer state`);
       assert((mode === "preview") === html.includes(enquiryPreviewScript), `${expected.output} has the wrong preview-script state`);
+      assert((locale === "en") === html.includes("data-language-suggestion hidden"), `${expected.output} has the wrong French-suggestion markup state`);
+      if (locale === "en") {
+        assert(html.includes(`<a href="${localeRoutes.fr.route}" lang="fr" hreflang="fr" data-language-alternate>`), `${expected.output} lacks its French suggestion destination`);
+      }
       if (mode) assert(html.includes(`data-form-mode="${mode}"`), `${expected.output} did not render ${mode} mode`);
     }
   }
@@ -289,11 +346,24 @@ async function inspectSite(directory, modes) {
   const englishBlog = htmlByOutput.get("blog.html");
   const frenchBlog = htmlByOutput.get("fr/blog.html");
   assert(!englishIndex.includes('id="blog"'), "English homepage still contains the removed blog section");
+  assert(englishIndex.includes("Everyln &amp; Fabiola"), "English homepage testimonial changed during the French revision");
   assert(englishBlog.includes("5 things our guests learned in Japan"), "English blog lost the supplied guest tips");
   assert(frenchBlog.includes("5 leçons apprises par mes voyageurs au Japon"), "French blog lost the authored guest lessons");
-  assert(frenchIndex.includes("Traduction française"), "French testimonial is not labeled as a translation");
-  assert(frenchIndex.includes('lang="en"'), "French testimonial does not preserve its English original for comparison");
-  assert(frenchIndex.includes("Prévisualisation locale"), "Unapproved French testimonial lacks its local-review disclosure");
+  const approvedFrenchTestimonial = "Pour notre premier voyage au Japon, nous pensions à un séjour court, fort en souvenirs. Les enfants voulaient de l'aventure, les parents voulaient découvrir les uniques attraits de la culture Japonaise. Kumiko nous ont préparé soigneusement une sélection d'hotels, de restaurants ainsi que les sites principaux à visiter. On a découvert un excellent restaurant basque, on s'est amusé à Universal Studios Japan, et on a aimé les hotels qu'ils ont choisi, et plus. Je recommande!";
+  for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout]]) {
+    assert(html.includes(approvedFrenchTestimonial), `${output} lacks the exact approved Heri testimonial`);
+    assert(html.includes('<p class="attribution">— Heri. R</p>'), `${output} lacks the exact Heri. R attribution`);
+    for (const obsolete of ["Traduction française", "testimonial-original", "Prévisualisation locale", "Everyln &amp; Fabiola"]) {
+      assert(!html.includes(obsolete), `${output} retains obsolete testimonial content: ${obsolete}`);
+    }
+  }
+  assert(frenchIndex.includes("Mes offres pour vous accompagner"), "French homepage lacks the approved offers heading");
+  assert(frenchIndex.includes("Un carnet de voyage et une web app"), "French homepage lacks the approved web app heading");
+  assert(frenchIndex.includes("<h3>Japon sur mesure</h3>"), "French homepage lacks the approved trip heading");
+  assert(frenchIndex.includes("<h3>Faire du shopping avec Kumiko</h3>"), "French homepage lacks the approved shopping heading");
+  assert(htmlByOutput.get("fr/services.html").includes("Un carnet de voyage et une web app"), "French service page lacks the duplicated approved web app label");
+  assert(!frenchIndex.includes('class="highlights"'), "French Heri testimonial retains E&F-specific highlights");
+  assert(!frenchIndex.includes("Une leçon sincère, désormais intégrée à chaque voyage"), "French Heri testimonial retains the E&F-specific lesson");
   assert(frenchIndex.includes("Votre voyage au Japon, <em>sur mesure</em>."), "French homepage lost its mobile-safe hero wording");
   for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout], ["fr/blog.html", frenchBlog]]) {
     assert(!html.includes("voyageuses"), `${output} guesses the guests' gender`);
@@ -415,14 +485,10 @@ assert(duplicateFrench.status !== 0 && duplicateFrench.stderr.includes("two diff
 const reusedEnglish = build({ FRENCH_TALLY_FORM_ID: "6DDMge", SITE_OUTPUT_DIR: path.join(testRoot, "reused") });
 assert(reusedEnglish.status !== 0 && reusedEnglish.stderr.includes("must not reuse"), "French configuration accepted an English form ID");
 
-const productionMissingApproval = build({ REQUIRE_PRODUCTION_READY: "1", SITE_OUTPUT_DIR: path.join(testRoot, "production-missing-approval") });
-assert(productionMissingApproval.status !== 0, "Production readiness asserted unapproved testimonial publication");
-assert(productionMissingApproval.stderr.includes("FRENCH_TESTIMONIAL_APPROVED=1"), "Production readiness did not identify pending testimonial approval");
 const productionMissingIds = build({
   REQUIRE_PRODUCTION_READY: "1",
   FRENCH_TALLY_FORM_ID: "",
   FRENCH_SHOPPING_TALLY_FORM_ID: "",
-  FRENCH_TESTIMONIAL_APPROVED: "1",
   SITE_OUTPUT_DIR: path.join(testRoot, "production-missing-ids"),
 });
 assert(productionMissingIds.status !== 0, "Production readiness accepted explicit-empty French forms");
@@ -432,18 +498,16 @@ for (const dependency of ["FRENCH_TALLY_FORM_ID", "FRENCH_SHOPPING_TALLY_FORM_ID
 const productionReadyDirectory = path.join(testRoot, "production-ready");
 const productionReady = build({
   REQUIRE_PRODUCTION_READY: "1",
-  FRENCH_TESTIMONIAL_APPROVED: "1",
   SITE_OUTPUT_DIR: productionReadyDirectory,
 });
 assert(productionReady.status === 0, `Complete production configuration was rejected: ${productionReady.stderr}`);
-assert(!(await readFile(path.join(productionReadyDirectory, "fr/index.html"), "utf8")).includes("Prévisualisation locale"), "Approved production output retains the testimonial review notice");
-assert(!(await readFile(path.join(productionReadyDirectory, "fr/a-propos.html"), "utf8")).includes("Prévisualisation locale"), "Approved French about page retains the testimonial review notice");
 
 const tallyInitializer = await readFile(path.join(root, "src/assets/scripts/tally-embed.js"), "utf8");
 assert(tallyInitializer.includes("Tally?.loadEmbeds()"), "Tally initializer does not call the official embed loader");
 const siteScript = await readFile(path.join(root, "src/assets/scripts/site.js"), "utf8");
 const serviceTabsScript = await readFile(path.join(root, "src/assets/scripts/service-tabs.js"), "utf8");
 verifyServiceLanguageSwitch(siteScript, serviceTabsScript);
+verifyLanguageSuggestion(siteScript);
 const baseStyles = await readFile(path.join(root, "src/styles/base.css"), "utf8");
 assert(!/\.tally-frame\s*\{[^}]*min-height/s.test(baseStyles), "Tally frame CSS blocks dynamic-height shrinking");
 const indexStyles = await readFile(path.join(root, "src/styles/index.css"), "utf8");

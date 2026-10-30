@@ -12,7 +12,6 @@ const shoppingTallyFormId = "Vpp72g";
 const frenchTallyFormId = process.env.FRENCH_TALLY_FORM_ID ?? "laaPRo";
 const frenchShoppingTallyFormId = process.env.FRENCH_SHOPPING_TALLY_FORM_ID ?? "Z99ple";
 const productionReadinessRequired = process.env.REQUIRE_PRODUCTION_READY === "1";
-const frenchTestimonialApproved = process.env.FRENCH_TESTIMONIAL_APPROVED === "1";
 
 for (const [name, value] of Object.entries({
   TALLY_FORM_ID: tallyFormId,
@@ -35,7 +34,6 @@ if (productionReadinessRequired) {
   const missing = [];
   if (!frenchTallyFormId) missing.push("FRENCH_TALLY_FORM_ID");
   if (!frenchShoppingTallyFormId) missing.push("FRENCH_SHOPPING_TALLY_FORM_ID");
-  if (!frenchTestimonialApproved) missing.push("FRENCH_TESTIMONIAL_APPROVED=1");
   if (missing.length) {
     throw new Error(`Production readiness failed: ${missing.join(", ")} ${missing.length === 1 ? "is" : "are"} required. No deployment-ready build was created.`);
   }
@@ -63,9 +61,6 @@ for (const [page, definition] of Object.entries(pages)) {
     const shoppingId = locale === "fr" ? frenchShoppingTallyFormId : shoppingTallyFormId;
     body = body.replaceAll("{{ENQUIRY_FORM}}", renderEnquiry(tripId, { locale, kind: "trip" }));
     body = body.replaceAll("{{SHOPPING_ENQUIRY_FORM}}", renderEnquiry(shoppingId, { locale, kind: "shopping" }));
-    body = body.replaceAll("{{FRENCH_TESTIMONIAL_REVIEW_NOTE}}", frenchTestimonialApproved
-      ? ""
-      : '<p class="translation-review-note"><strong>Prévisualisation locale :</strong> cette traduction attend encore l’approbation de publication de la propriétaire.</p>');
     const enquiryMode = hasShoppingEnquiryForm
       ? (shoppingId ? "tally" : "placeholder")
       : hasEnquiryForm

@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Project overview, local workflow, architecture and release documentation for the Bento Kumiko website."
 tags: [bento-kumiko, website, github, cloudflare]
-timestamp: 2026-10-30T17:10:40+09:00
+timestamp: 2026-10-30T18:05:02+09:00
 ---
 
 # Bento Kumiko
@@ -17,8 +17,9 @@ timestamp: 2026-10-30T17:10:40+09:00
 - Dedicated Tally enquiry forms for trip planning and shopping
 - A mobile-first service selector that remains usable without JavaScript
 - Travel notes and destination content in the blog
-- The approved Everyln & Fabiola homepage testimonial
+- The approved Everyln & Fabiola English testimonial and Heri. R French testimonial
 - Complete English and French editions with equivalent page-level language links
+- English-default navigation with an optional French suggestion for a primary French browser preference
 - Fourteen generated HTML pages, including English and nested French 404 pages
 
 ## Quick start
@@ -46,7 +47,9 @@ Open `http://127.0.0.1:4173`. Rebuild after changing source content or styles.
 | `pnpm cloudflare:dry-run` | Build and validate the Cloudflare upload without deploying |
 | `pnpm cloudflare:deploy` | Run the mandatory readiness build, then deploy through authenticated Wrangler; release authority required |
 
-An ordinary build uses the approved English trip form `6DDMge` and shopping form `Vpp72g`, plus the published French trip form `laaPRo` and shopping form `Z99ple`. The trip IDs can be overridden independently; explicit-empty French values render disclosed, noninteractive placeholders. Ordinary preview, build, test and dry-run commands remain usable without publication approval. The deploy command always enables the production-readiness gate and still requires explicit release authority. See [Tally enquiry activation](/docs/TALLY.md).
+An ordinary build uses the approved English trip form `6DDMge` and shopping form `Vpp72g`, plus the published French trip form `laaPRo` and shopping form `Z99ple`. The trip IDs can be overridden independently; explicit-empty French values render disclosed, noninteractive placeholders. Ordinary preview, build, test and dry-run commands remain usable without release authority. The deploy command always enables the form-readiness gate and still requires explicit human release authority. See [Tally enquiry activation](/docs/TALLY.md).
+
+English remains the default at root and existing English URLs. A primary French browser preference may reveal a nonmodal link to the equivalent French page, but it never redirects, stores a preference or treats a secondary language as the visitor’s choice.
 
 ## Architecture
 

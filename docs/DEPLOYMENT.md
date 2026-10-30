@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko deployment"
 description: "Bilingual Cloudflare release, production-readiness validation, verification and rollback with an optional Docker alternative."
 tags: [bento-kumiko, cloudflare, deployment, rollback, french]
-timestamp: 2026-10-30T17:10:40+09:00
+timestamp: 2026-10-30T18:05:02+09:00
 ---
 
 # Deployment
@@ -25,15 +25,14 @@ The previous Dokploy site is stopped. The repository's Docker and nginx files re
    ```
 
 4. Record the accepted commit and current successful Cloudflare deployment for rollback.
-5. Confirm the published French defaults remain trip `laaPRo` and shopping `Z99ple`, verify the owner-side settings described in [Tally enquiry activation](/docs/TALLY.md), and obtain explicit owner approval of the French Everyln & Fabiola testimonial translation. Public destination verification alone is not delivery verification.
-6. Only after testimonial approval and with explicit release authority plus the existing authenticated Wrangler session, run the guarded deploy locally:
+5. Confirm the published French defaults remain trip `laaPRo` and shopping `Z99ple`, verify the owner-side settings described in [Tally enquiry activation](/docs/TALLY.md), and obtain explicit human acceptance of the exact release revision. Public destination verification alone is not delivery verification.
+6. Only with explicit release authority plus the existing authenticated Wrangler session, run the guarded deploy locally:
 
    ```sh
-   FRENCH_TESTIMONIAL_APPROVED=1 \
    pnpm cloudflare:deploy
    ```
 
-   The package script sets `REQUIRE_PRODUCTION_READY=1` on its own and rebuilds before upload, so the readiness check applies to the artifact Wrangler deploys. It does not set or imply testimonial approval. Missing, invalid, duplicated or English-reused French form IDs stop the build before Wrangler runs; the two explicitly named variables are wired and tested against their respective trip and shopping pages. Do not bypass the package script for the bilingual release.
+   The package script sets `REQUIRE_PRODUCTION_READY=1` on its own and rebuilds before upload, so the form-readiness check applies to the artifact Wrangler deploys. Passing the check does not grant release authority. Missing, invalid, duplicated or English-reused French form IDs stop the build before Wrangler runs; the two explicitly named variables are wired and tested against their respective trip and shopping pages. Do not bypass the package script for the bilingual release.
 7. Verify both hostnames over HTTPS, all twelve canonical public pages, `/fr`, `/fr/`, `/health`, a known asset, a root unknown path and nested unknown French paths. Missing paths must return the correctly localized branded 404 with status 404. Confirm all four intended form embeds and their direct fallback links without sending customer data.
 
 Pushing `main` does not deploy production. GitHub Actions is configured for pushes and pull requests to `development` and `main`, but the latest release had no observed remote run; check the actual run before relying on it.
@@ -56,7 +55,6 @@ The Docker image builds the same static output with Node and serves it from ngin
 
 ```sh
 docker build \
-  --build-arg FRENCH_TESTIMONIAL_APPROVED=1 \
   --build-arg REQUIRE_PRODUCTION_READY=1 \
   --tag bento-kumiko .
 docker run --rm -p 8080:8080 bento-kumiko

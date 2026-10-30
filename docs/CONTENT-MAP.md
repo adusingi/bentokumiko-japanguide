@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko content map"
 description: "Bilingual ownership map for public pages, shared content, approved commercial copy and pending owner material."
 tags: [bento-kumiko, content, website, ownership, french]
-timestamp: 2026-10-30T17:10:40+09:00
+timestamp: 2026-10-30T18:05:02+09:00
 ---
 
 # Content map
@@ -24,6 +24,8 @@ Shared navigation and footer live in `src/components/layout.mjs`. The compact ro
 
 Treat each row above as one content pair. Any change to English facts, commercial wording, links, image meaning, metadata or interactive labels must review and normally update the corresponding French source and `src/i18n/site.mjs` in the same change. If the owner intentionally postpones a translation, record the exact page and English change in [Owner follow-ups](/docs/TOMORROW.md) before release; do not silently leave a stale translation. Automated checks verify routes, links, metadata relationships, pricing/form invariants and placeholders, but editorial equivalence still needs human review.
 
+Root and existing English URLs always remain English. French pages are reached through explicit `/fr/` URLs or a visitor-selected language link. On English pages, a validated primary French browser preference may reveal a small link to the real equivalent French page; it never redirects automatically, reads a secondary preference, stores state or infers language from location.
+
 ## Approved service copy
 
 - Trip planning: `$350` for up to one week, plus `$50` per extra week. This is a planning fee; guests book and pay for hotels and transport separately.
@@ -33,7 +35,7 @@ Historic sample-trip costs remain clearly illustrative and are not current quote
 
 ## Testimonials
 
-The English homepage publishes the approved Everyln & Fabiola testimonial. The French local-review build shows a labeled proposed translation and preserves the English original for comparison. `FRENCH_TESTIMONIAL_APPROVED=1` must record owner publication approval in the guarded release command; until then, the French page visibly identifies the translation as a local preview. Secondary Heri and Peter cards remain preserved but hidden in English source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
+The English homepage publishes the approved Everyln & Fabiola testimonial. The French homepage and About page publish the owner-supplied, approved original French testimonial attributed to `Heri. R`; its spelling, punctuation and grammar remain verbatim. The separate Heri and Peter cards remain preserved but hidden in English source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
 
 Kumiko has chosen not to use a personal portrait, so the site has no portrait or portrait placeholder.
 

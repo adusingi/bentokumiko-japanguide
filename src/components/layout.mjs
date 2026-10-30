@@ -28,6 +28,14 @@ export function renderLayout({ page, locale, title, description, style, fragment
   ];
   const canonical = canonicalFor(locale, page);
   const enquiryCurrent = page === "enquire" ? ' current" aria-current="page' : "";
+  const languageSuggestion = locale === "en"
+    ? `<aside class="language-suggestion" data-language-suggestion hidden>
+    <div class="wrap language-suggestion-in" lang="fr">
+      <span>Vous préférez lire en français ?</span>
+      <a href="${routeFor("fr", page)}" lang="fr" hreflang="fr" data-language-alternate>Voir cette page en français</a>
+    </div>
+  </aside>`
+    : "";
   return `<!doctype html>
 <html lang="${strings.htmlLang}">
 <head>
@@ -63,6 +71,7 @@ export function renderLayout({ page, locale, title, description, style, fragment
       </nav>
     </div>
   </header>
+  ${languageSuggestion}
   <div id="main-content" tabindex="-1">${body}</div>
   <footer class="site">
     <div class="wrap foot-in">

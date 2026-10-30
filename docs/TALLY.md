@@ -3,7 +3,7 @@ type: Guide
 title: "Tally enquiry activation"
 description: "English and French trip and shopping form build modes, ownership, readiness gates and verification steps."
 tags: [bento-kumiko, tally, forms, french]
-timestamp: 2026-10-30T17:10:40+09:00
+timestamp: 2026-10-30T18:05:02+09:00
 ---
 
 # Tally enquiry activation
@@ -48,13 +48,11 @@ This table documents the existing English trip form and stable website vocabular
 
 ## Production-readiness gate
 
-Ordinary `pnpm build`, `pnpm test` and `pnpm cloudflare:dry-run` remain available without publication approval and allow explicit-empty French placeholders. The `cloudflare:deploy` package script itself sets `REQUIRE_PRODUCTION_READY=1` for its build; a normal deploy can no longer bypass the gate. The guarded build stops before Wrangler runs when a French ID is missing, malformed, reused or shared between the two journeys, or when `FRENCH_TESTIMONIAL_APPROVED=1` has not been explicitly supplied after owner approval. The exact authorized release command is maintained in [Deployment](/docs/DEPLOYMENT.md).
-
-The testimonial flag records owner approval of the website translation only. It does not approve, create or change anything in Tally.
+Ordinary `pnpm build`, `pnpm test` and `pnpm cloudflare:dry-run` remain available without release authority and allow explicit-empty French placeholders. The `cloudflare:deploy` package script itself sets `REQUIRE_PRODUCTION_READY=1` for its build; a normal deploy cannot bypass the gate. The guarded build stops before Wrangler runs when a French ID is missing, malformed, reused or shared between the two journeys. Passing this form-readiness gate is not deployment authority and does not prove Tally delivery. The exact authorized release command is maintained in [Deployment](/docs/DEPLOYMENT.md).
 
 The configured pages use Tally's official widget script and `dynamicHeight=1` embed option so each iframe follows its form across viewport sizes and form pages. The host page does not style the cross-origin forms. See Tally's [embed guide](https://tally.so/help/embed-your-form) and [widget embed documentation](https://developers.tally.so/widgets/embeds).
 
-For the optional Docker build, leave form arguments unset to use all four published defaults. Pass another approved public trip ID as a build argument to override its journey, or pass an explicit empty French value for placeholder mode. A production-ready container also passes `REQUIRE_PRODUCTION_READY=1` and the testimonial approval flag. Changing any mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
+For the optional Docker build, leave form arguments unset to use all four published defaults. Pass another approved public trip ID as a build argument to override its journey, or pass an explicit empty French value for placeholder mode. A production-ready container also passes `REQUIRE_PRODUCTION_READY=1`. Changing any mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
 
 ## Privacy behavior
 

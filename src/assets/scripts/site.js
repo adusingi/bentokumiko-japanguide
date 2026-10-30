@@ -68,4 +68,24 @@
   document.addEventListener("click", function (event) {
     if (event.target.closest("[data-language-alternate]")) updateLanguageLinks();
   }, true);
+
+  var languageSuggestion = document.querySelector("[data-language-suggestion]");
+  if (!languageSuggestion || typeof navigator === "undefined" || typeof Intl === "undefined" || typeof Intl.Locale !== "function") return;
+  var primaryLanguage;
+  try {
+    primaryLanguage = navigator.languages && navigator.languages.length > 0
+      ? navigator.languages[0]
+      : navigator.language;
+  } catch {
+    return;
+  }
+  if (typeof primaryLanguage !== "string") return;
+  try {
+    var primaryLocale = new Intl.Locale(primaryLanguage);
+    var isFrench = primaryLocale.language.toLowerCase() === "fr";
+    var isExactFrenchOrRegional = primaryLanguage.toLowerCase() === "fr" || Boolean(primaryLocale.region);
+    if (isFrench && isExactFrenchOrRegional) languageSuggestion.hidden = false;
+  } catch {
+    // Unparseable preference data is not reliable enough to make a suggestion.
+  }
 }());

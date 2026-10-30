@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko Cloudflare operations"
 description: "Bilingual Workers Static Assets routing, DNS safety, guarded release verification and rollback guidance."
 tags: [bento-kumiko, cloudflare, ovh, dns, deployment, french]
-timestamp: 2026-10-30T17:06:11+09:00
+timestamp: 2026-10-30T17:10:40+09:00
 ---
 
 # Cloudflare operations
@@ -35,10 +35,10 @@ These local checks cannot prove account permissions, public DNS, certificates, r
 Production is deployed with manager-authorized local Wrangler from the accepted `main` revision and the readiness variables documented in [Deployment](/docs/DEPLOYMENT.md):
 
 ```sh
-FRENCH_TALLY_FORM_ID=<trip-id> FRENCH_SHOPPING_TALLY_FORM_ID=<shopping-id> FRENCH_TESTIMONIAL_APPROVED=1 REQUIRE_PRODUCTION_READY=1 pnpm cloudflare:deploy
+FRENCH_TESTIMONIAL_APPROVED=1 pnpm cloudflare:deploy
 ```
 
-The command rebuilds the site before upload. It is intentionally separate from `pnpm test` and must not be run without release authority. GitHub pushes do not automatically deploy this Worker. GitHub Actions is configured to check pushes and pull requests, but verify the actual run rather than assuming it passed.
+The package command sets `REQUIRE_PRODUCTION_READY=1`, rebuilds the site, and proceeds to Wrangler only after the gate passes. It deliberately does not set testimonial approval; the shown flag may be supplied only after owner approval. The command is intentionally separate from `pnpm test` and must not be run without release authority. GitHub pushes do not automatically deploy this Worker. GitHub Actions is configured to check pushes and pull requests, but verify the actual run rather than assuming it passed.
 
 After deployment, verify:
 

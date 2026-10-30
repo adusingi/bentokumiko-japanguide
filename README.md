@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Project overview, local workflow, architecture and release documentation for the Bento Kumiko website."
 tags: [bento-kumiko, website, github, cloudflare]
-timestamp: 2026-10-30T17:07:22+09:00
+timestamp: 2026-10-30T17:10:40+09:00
 ---
 
 # Bento Kumiko
@@ -44,9 +44,9 @@ Open `http://127.0.0.1:4173`. Rebuild after changing source content or styles.
 | `pnpm preview` | Serve the current `dist/` locally on port 4173 |
 | `pnpm cloudflare:dev` | Build and run the site in the local Wrangler runtime |
 | `pnpm cloudflare:dry-run` | Build and validate the Cloudflare upload without deploying |
-| `pnpm cloudflare:deploy` | Build and deploy through authenticated Wrangler; release authority required |
+| `pnpm cloudflare:deploy` | Run the mandatory readiness build, then deploy through authenticated Wrangler; release authority required |
 
-An ordinary build preserves the approved English trip form `6DDMge` and shopping form `Vpp72g`. `TALLY_FORM_ID` can override or explicitly disable only the English trip form. Until the owner supplies two independently published French form IDs, French builds show disclosed, noninteractive placeholders. Ordinary preview, build, test and dry-run commands do not require those IDs; the documented production command enables a mandatory readiness gate. See [Tally enquiry activation](/docs/TALLY.md).
+An ordinary build uses the approved English trip form `6DDMge` and shopping form `Vpp72g`, plus the published French trip form `laaPRo` and shopping form `Z99ple`. The trip IDs can be overridden independently; explicit-empty French values render disclosed, noninteractive placeholders. Ordinary preview, build, test and dry-run commands remain usable without publication approval. The deploy command always enables the production-readiness gate and still requires explicit release authority. See [Tally enquiry activation](/docs/TALLY.md).
 
 ## Architecture
 

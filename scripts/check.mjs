@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdtemp, mkdir, readFile, readdir, stat, symlink, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { request } from "node:http";
+import { runInNewContext } from "node:vm";
 import os from "node:os";
 import path from "node:path";
 import { planOutputDirectory, prepareOutputDirectory } from "../lib/output-directory.mjs";
@@ -105,6 +106,105 @@ function outputPathForReference(sourceOutput, rawReference) {
     : path.normalize(path.join(path.dirname(sourceOutput), withoutQuery));
   if (!localPath || localPath.endsWith("/")) localPath += "index.html";
   return localPath;
+}
+
+function verifyServiceLanguageSwitch(siteScript, serviceTabsScript) {
+  function classList() {
+    const values = new Set();
+    return {
+      add: (...names) => names.forEach((name) => values.add(name)),
+      remove: (...names) => names.forEach((name) => values.delete(name)),
+      contains: (name) => values.has(name),
+      toggle(name) {
+        if (values.has(name)) {
+          values.delete(name);
+          return false;
+        }
+        values.add(name);
+        return true;
+      },
+    };
+  }
+
+  function element({ dataset = {}, href = "", id = "" } = {}) {
+    const attributes = new Map(href ? [["href", href]] : []);
+    const listeners = new Map();
+    return {
+      dataset: { ...dataset },
+      id,
+      href,
+      hidden: false,
+      tabIndex: 0,
+      textContent: "",
+      classList: classList(),
+      listeners,
+      addEventListener(type, listener) { listeners.set(type, listener); },
+      setAttribute(name, value) { attributes.set(name, String(value)); },
+      getAttribute(name) { return attributes.get(name) || null; },
+      focus() {},
+      closest() { return null; },
+    };
+  }
+
+  const alternateLink = element({ href: "/fr/services.html" });
+  const header = element();
+  const toggle = element({ dataset: { openLabel: "Open menu", closeLabel: "Close menu" } });
+  const nav = element();
+  const tablist = element();
+  const status = element();
+  const selectedService = element();
+  const tripTab = element({ dataset: { serviceTab: "trip" }, href: "#service-trip" });
+  const shoppingTab = element({ dataset: { serviceTab: "shopping" }, href: "#shopping" });
+  const tripPanel = element({ dataset: { servicePanel: "trip" }, id: "service-trip" });
+  const shoppingPanel = element({ dataset: { servicePanel: "shopping" }, id: "shopping" });
+  const chooser = element({ dataset: { tripLabel: "Trip planning", shoppingLabel: "Shopping assistance" } });
+  chooser.querySelector = (selector) => ({
+    "[data-service-tabs]": tablist,
+    "[data-service-status]": status,
+    "[data-selected-service]": selectedService,
+  })[selector] || null;
+  chooser.querySelectorAll = (selector) => selector === "[data-service-tab]"
+    ? [tripTab, shoppingTab]
+    : selector === "[data-service-panel]" ? [tripPanel, shoppingPanel] : [];
+
+  const windowListeners = new Map();
+  const documentListeners = new Map();
+  const location = { hash: "", origin: siteOrigin };
+  const window = {
+    location,
+    scrollY: 0,
+    matchMedia: () => ({ matches: true }),
+    addEventListener(type, listener) {
+      const listeners = windowListeners.get(type) || [];
+      listeners.push(listener);
+      windowListeners.set(type, listeners);
+    },
+    dispatchEvent(event) {
+      for (const listener of windowListeners.get(event.type) || []) listener(event);
+    },
+    history: {
+      replaceState(_state, _unused, url) { location.hash = url.startsWith("#") ? url : new URL(url, siteOrigin).hash; },
+    },
+  };
+  const document = {
+    body: { dataset: { preservedFragments: "service-trip,shopping" } },
+    getElementById(id) { return ({ siteHeader: header, navToggle: toggle, mainNav: nav })[id] || null; },
+    querySelector(selector) { return selector === "[data-service-chooser]" ? chooser : null; },
+    querySelectorAll(selector) { return selector === "[data-language-alternate]" ? [alternateLink] : []; },
+    addEventListener(type, listener) { documentListeners.set(type, listener); },
+  };
+  class MockEvent { constructor(type) { this.type = type; } }
+  const context = { document, window, URL, Event: MockEvent };
+
+  runInNewContext(siteScript, context);
+  runInNewContext(serviceTabsScript, context);
+  shoppingTab.listeners.get("click")({ preventDefault() {} });
+  assert(location.hash === "#shopping", "Shopping tab activation did not update the current URL");
+  assert(alternateLink.href === "/fr/services.html#shopping", "Language switch lost shopping after client-side tab selection");
+
+  location.hash = "#not-allowlisted";
+  window.dispatchEvent(new MockEvent("bento:locationchange"));
+  assert(alternateLink.href === "/fr/services.html", "Language switch preserved an arbitrary fragment");
 }
 
 async function inspectSite(directory, modes) {
@@ -223,7 +323,7 @@ assert(!("routes" in wrangler), "Wrangler config must not claim live domains");
 
 const testRoot = await mkdtemp(path.join(os.tmpdir(), "bento-check-"));
 const distBefore = await snapshotDirectory(path.join(root, "dist"));
-const defaultModes = { en: { trip: "tally", shopping: "tally" }, fr: { trip: "placeholder", shopping: "placeholder" } };
+const defaultModes = { en: { trip: "tally", shopping: "tally" }, fr: { trip: "tally", shopping: "tally" } };
 
 const defaultDirectory = path.join(testRoot, "default");
 const defaultBuild = build({ SITE_OUTPUT_DIR: defaultDirectory });
@@ -231,6 +331,8 @@ assert(defaultBuild.status === 0, `Default build failed: ${defaultBuild.stderr}`
 await inspectSite(defaultDirectory, defaultModes);
 const defaultEnquire = await readFile(path.join(defaultDirectory, "enquire.html"), "utf8");
 const defaultShopping = await readFile(path.join(defaultDirectory, "shopping.html"), "utf8");
+const defaultFrenchEnquire = await readFile(path.join(defaultDirectory, "fr/contact.html"), "utf8");
+const defaultFrenchShopping = await readFile(path.join(defaultDirectory, "fr/shopping.html"), "utf8");
 assert(defaultEnquire.includes("https://tally.so/embed/6DDMge"), "Default English build lacks the approved trip form");
 assert(defaultEnquire.includes("https://tally.so/r/6DDMge"), "Default English trip fallback is missing");
 assert(defaultShopping.includes("https://tally.so/embed/Vpp72g"), "Default English shopping page lacks its approved form");
@@ -238,6 +340,24 @@ assert(defaultShopping.includes("https://tally.so/r/Vpp72g"), "Default English s
 assert(defaultShopping.includes('title="Shopping day enquiry"'), "English shopping iframe lacks its accessible title");
 assert(!defaultShopping.includes("https://tally.so/embed/6DDMge"), "English shopping page uses the trip form");
 assert(!defaultEnquire.includes("https://tally.so/embed/Vpp72g"), "English trip page uses the shopping form");
+assert(defaultFrenchEnquire.includes("https://tally.so/embed/laaPRo"), "Default French trip form is missing");
+assert(defaultFrenchEnquire.includes("https://tally.so/r/laaPRo"), "Default French trip fallback is missing");
+assert(defaultFrenchShopping.includes("https://tally.so/embed/Z99ple"), "Default French shopping form is missing");
+assert(defaultFrenchShopping.includes("https://tally.so/r/Z99ple"), "Default French shopping fallback is missing");
+assert(!defaultFrenchEnquire.includes("Z99ple"), "Default French trip page uses the shopping form");
+assert(!defaultFrenchShopping.includes("laaPRo"), "Default French shopping page uses the trip form");
+
+const frenchPlaceholderDirectory = path.join(testRoot, "french-placeholder");
+const frenchPlaceholderBuild = build({
+  FRENCH_TALLY_FORM_ID: "",
+  FRENCH_SHOPPING_TALLY_FORM_ID: "",
+  SITE_OUTPUT_DIR: frenchPlaceholderDirectory,
+});
+assert(frenchPlaceholderBuild.status === 0, `Explicit French placeholder build failed: ${frenchPlaceholderBuild.stderr}`);
+await inspectSite(frenchPlaceholderDirectory, { en: { trip: "tally", shopping: "tally" }, fr: { trip: "placeholder", shopping: "placeholder" } });
+const frenchPlaceholder = await readFile(path.join(frenchPlaceholderDirectory, "fr/contact.html"), "utf8");
+assert(!frenchPlaceholder.includes("tally.so/"), "Explicit-empty French trip output contains a Tally destination");
+assert(!frenchPlaceholder.includes("<form"), "French placeholder unexpectedly contains an interactive form");
 
 const previewDirectory = path.join(testRoot, "preview");
 const previewBuild = build({ TALLY_FORM_ID: "", SITE_OUTPUT_DIR: previewDirectory });
@@ -272,7 +392,7 @@ assert(!configuredFrench.includes("frShop456"), "French trip page uses the shopp
 assert(!configuredFrenchShopping.includes("frTrip123"), "French shopping page uses the trip form");
 
 const mixedDirectory = path.join(testRoot, "mixed");
-const mixedBuild = build({ FRENCH_TALLY_FORM_ID: "frTripOnly", SITE_OUTPUT_DIR: mixedDirectory });
+const mixedBuild = build({ FRENCH_TALLY_FORM_ID: "frTripOnly", FRENCH_SHOPPING_TALLY_FORM_ID: "", SITE_OUTPUT_DIR: mixedDirectory });
 assert(mixedBuild.status === 0, `Mixed French form build failed: ${mixedBuild.stderr}`);
 const mixedTrip = await readFile(path.join(mixedDirectory, "fr/contact.html"), "utf8");
 const mixedShopping = await readFile(path.join(mixedDirectory, "fr/shopping.html"), "utf8");
@@ -289,16 +409,23 @@ assert(duplicateFrench.status !== 0 && duplicateFrench.stderr.includes("two diff
 const reusedEnglish = build({ FRENCH_TALLY_FORM_ID: "6DDMge", SITE_OUTPUT_DIR: path.join(testRoot, "reused") });
 assert(reusedEnglish.status !== 0 && reusedEnglish.stderr.includes("must not reuse"), "French configuration accepted an English form ID");
 
-const productionMissing = build({ REQUIRE_PRODUCTION_READY: "1", SITE_OUTPUT_DIR: path.join(testRoot, "production-missing") });
-assert(productionMissing.status !== 0, "Production readiness accepted missing French dependencies");
-for (const dependency of ["FRENCH_TALLY_FORM_ID", "FRENCH_SHOPPING_TALLY_FORM_ID", "FRENCH_TESTIMONIAL_APPROVED=1"]) {
-  assert(productionMissing.stderr.includes(dependency), `Production readiness did not identify ${dependency}`);
+const productionMissingApproval = build({ REQUIRE_PRODUCTION_READY: "1", SITE_OUTPUT_DIR: path.join(testRoot, "production-missing-approval") });
+assert(productionMissingApproval.status !== 0, "Production readiness asserted unapproved testimonial publication");
+assert(productionMissingApproval.stderr.includes("FRENCH_TESTIMONIAL_APPROVED=1"), "Production readiness did not identify pending testimonial approval");
+const productionMissingIds = build({
+  REQUIRE_PRODUCTION_READY: "1",
+  FRENCH_TALLY_FORM_ID: "",
+  FRENCH_SHOPPING_TALLY_FORM_ID: "",
+  FRENCH_TESTIMONIAL_APPROVED: "1",
+  SITE_OUTPUT_DIR: path.join(testRoot, "production-missing-ids"),
+});
+assert(productionMissingIds.status !== 0, "Production readiness accepted explicit-empty French forms");
+for (const dependency of ["FRENCH_TALLY_FORM_ID", "FRENCH_SHOPPING_TALLY_FORM_ID"]) {
+  assert(productionMissingIds.stderr.includes(dependency), `Production readiness did not identify ${dependency}`);
 }
 const productionReadyDirectory = path.join(testRoot, "production-ready");
 const productionReady = build({
   REQUIRE_PRODUCTION_READY: "1",
-  FRENCH_TALLY_FORM_ID: "readyTrip1",
-  FRENCH_SHOPPING_TALLY_FORM_ID: "readyShop2",
   FRENCH_TESTIMONIAL_APPROVED: "1",
   SITE_OUTPUT_DIR: productionReadyDirectory,
 });
@@ -309,16 +436,31 @@ assert(!(await readFile(path.join(productionReadyDirectory, "fr/a-propos.html"),
 const tallyInitializer = await readFile(path.join(root, "src/assets/scripts/tally-embed.js"), "utf8");
 assert(tallyInitializer.includes("Tally?.loadEmbeds()"), "Tally initializer does not call the official embed loader");
 const siteScript = await readFile(path.join(root, "src/assets/scripts/site.js"), "utf8");
-assert(siteScript.includes('addEventListener("hashchange", updateLanguageLinks)'), "Language links do not track approved fragment changes progressively");
+const serviceTabsScript = await readFile(path.join(root, "src/assets/scripts/service-tabs.js"), "utf8");
+verifyServiceLanguageSwitch(siteScript, serviceTabsScript);
 const baseStyles = await readFile(path.join(root, "src/styles/base.css"), "utf8");
 assert(!/\.tally-frame\s*\{[^}]*min-height/s.test(baseStyles), "Tally frame CSS blocks dynamic-height shrinking");
 const dockerfile = await readFile(path.join(root, "Dockerfile"), "utf8");
 for (const variable of ["TALLY_FORM_ID", "FRENCH_TALLY_FORM_ID", "FRENCH_SHOPPING_TALLY_FORM_ID", "REQUIRE_PRODUCTION_READY"]) {
   assert(dockerfile.includes(`ARG ${variable}`), `Docker build does not expose ${variable}`);
 }
+assert(dockerfile.includes('ARG FRENCH_TALLY_FORM_ID="laaPRo"'), "Docker does not default to the published French trip form");
+assert(dockerfile.includes('ARG FRENCH_SHOPPING_TALLY_FORM_ID="Z99ple"'), "Docker does not default to the published French shopping form");
 const nginx = await readFile(path.join(root, "nginx/default.conf"), "utf8");
-assert(nginx.includes("location ^~ /fr/"), "nginx does not preserve French routing ahead of generic HTML handling");
-assert(nginx.includes("error_page 404 /fr/404.html"), "nginx does not use the nested French 404 page");
+const frenchLocationIndex = nginx.indexOf("location ^~ /fr/");
+const genericHtmlIndex = nginx.indexOf("location ~* \\.html$");
+assert(frenchLocationIndex !== -1 && frenchLocationIndex < genericHtmlIndex, "nginx lets the generic HTML regex win over French routing");
+const frenchLocation = nginx.slice(frenchLocationIndex, genericHtmlIndex);
+assert(frenchLocation.includes("error_page 404 /fr/404.html"), "nginx does not use the nested French 404 page");
+assert(frenchLocation.includes('add_header Cache-Control "no-cache"'), "nginx French routes lost HTML cache headers");
+assert(frenchLocation.includes("include /etc/nginx/snippets/security-headers.conf"), "nginx French routes lost security headers");
+const french404Location = nginx.match(/location = \/fr\/404\.html \{([\s\S]*?)\n  \}/)?.[1] || "";
+assert(french404Location.includes('add_header Cache-Control "no-cache"'), "nginx French 404 lost HTML cache headers");
+assert(french404Location.includes("include /etc/nginx/snippets/security-headers.conf"), "nginx French 404 lost security headers");
+
+const packageManifest = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
+assert(packageManifest.scripts["cloudflare:deploy"].startsWith("REQUIRE_PRODUCTION_READY=1 pnpm build"), "Normal Cloudflare deploy bypasses production readiness");
+assert(!packageManifest.scripts["cloudflare:dry-run"].includes("REQUIRE_PRODUCTION_READY"), "Cloudflare dry-run unexpectedly requires publication readiness");
 
 const populatedDirectory = path.join(testRoot, "populated");
 await mkdir(populatedDirectory);
@@ -358,7 +500,7 @@ try {
   assert(frenchRedirect.status === 308 && frenchRedirect.location === "/fr/", "Preview does not redirect /fr to /fr/");
   const frenchHome = await get(server, "/fr/");
   assert(frenchHome.status === 200 && frenchHome.body.includes('<html lang="fr">'), "Preview does not serve the French home route");
-  for (const missingPath of ["/fr/missing", "/fr/nested/missing"]) {
+  for (const missingPath of ["/fr/missing", "/fr/missing.html", "/fr/nested/missing", "/fr/nested/missing.html"]) {
     const missing = await get(server, missingPath);
     assert(missing.status === 404 && missing.body.includes('<html lang="fr">'), `${missingPath} does not return the nested French 404`);
   }

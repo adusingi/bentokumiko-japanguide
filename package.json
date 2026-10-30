@@ -9,7 +9,7 @@
     "check": "node scripts/check.mjs",
     "cloudflare:dev": "pnpm build && wrangler dev",
     "cloudflare:dry-run": "pnpm build && WRANGLER_SEND_METRICS=false WRANGLER_LOG_PATH=.wrangler/logs/wrangler.log wrangler deploy --dry-run",
-    "cloudflare:deploy": "pnpm build && wrangler deploy",
+    "cloudflare:deploy": "REQUIRE_PRODUCTION_READY=1 pnpm build && wrangler deploy",
     "preview": "node scripts/serve.mjs",
     "test": "node scripts/check.mjs"
   },

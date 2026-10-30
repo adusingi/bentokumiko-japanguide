@@ -19,6 +19,7 @@
       if (selected && focus) tab.focus();
       if (selected && updateHash) window.history.replaceState(null, "", tab.getAttribute("href"));
     });
+    if (updateHash) window.dispatchEvent(new Event("bento:locationchange"));
     panels.forEach(function (panel) {
       panel.hidden = panel.dataset.servicePanel !== key;
     });

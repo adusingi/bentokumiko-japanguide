@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko deployment"
 description: "Bilingual Cloudflare release, production-readiness validation, verification and rollback with an optional Docker alternative."
 tags: [bento-kumiko, cloudflare, deployment, rollback, french]
-timestamp: 2026-10-30T17:06:31+09:00
+timestamp: 2026-10-30T17:10:40+09:00
 ---
 
 # Deployment
@@ -25,25 +25,22 @@ The previous Dokploy site is stopped. The repository's Docker and nginx files re
    ```
 
 4. Record the accepted commit and current successful Cloudflare deployment for rollback.
-5. Obtain the two published French Tally IDs and explicit owner approval of the French Everyln & Fabiola testimonial translation. Verify the owner-side settings described in [Tally enquiry activation](/docs/TALLY.md).
-6. With explicit release authority and the existing authenticated Wrangler session, run the guarded deploy locally, replacing the bracketed values with the two real published IDs:
+5. Confirm the published French defaults remain trip `laaPRo` and shopping `Z99ple`, verify the owner-side settings described in [Tally enquiry activation](/docs/TALLY.md), and obtain explicit owner approval of the French Everyln & Fabiola testimonial translation. Public destination verification alone is not delivery verification.
+6. Only after testimonial approval and with explicit release authority plus the existing authenticated Wrangler session, run the guarded deploy locally:
 
    ```sh
-   FRENCH_TALLY_FORM_ID=<trip-id> \
-   FRENCH_SHOPPING_TALLY_FORM_ID=<shopping-id> \
    FRENCH_TESTIMONIAL_APPROVED=1 \
-   REQUIRE_PRODUCTION_READY=1 \
    pnpm cloudflare:deploy
    ```
 
-   `pnpm cloudflare:deploy` rebuilds before upload, so the readiness check applies to the artifact Wrangler deploys. Missing, invalid, duplicated or English-reused French form IDs stop that build before upload; the two explicitly named variables are wired and tested against their respective trip and shopping pages. Do not use an unguarded deploy for the bilingual release.
+   The package script sets `REQUIRE_PRODUCTION_READY=1` on its own and rebuilds before upload, so the readiness check applies to the artifact Wrangler deploys. It does not set or imply testimonial approval. Missing, invalid, duplicated or English-reused French form IDs stop the build before Wrangler runs; the two explicitly named variables are wired and tested against their respective trip and shopping pages. Do not bypass the package script for the bilingual release.
 7. Verify both hostnames over HTTPS, all twelve canonical public pages, `/fr`, `/fr/`, `/health`, a known asset, a root unknown path and nested unknown French paths. Missing paths must return the correctly localized branded 404 with status 404. Confirm all four intended form embeds and their direct fallback links without sending customer data.
 
 Pushing `main` does not deploy production. GitHub Actions is configured for pushes and pull requests to `development` and `main`, but the latest release had no observed remote run; check the actual run before relying on it.
 
 ## Build configuration
 
-An ordinary build uses the approved English trip form ID `6DDMge`. A different approved English trip ID can be supplied with `TALLY_FORM_ID`; an explicit empty value disables only the English trip form and leaves the English shopping form `Vpp72g` live. Missing French IDs produce noninteractive local-review placeholders, so preview, test, build and Cloudflare dry-run remain usable while the owner prepares them. These are public build settings, not secrets. See [Tally enquiry activation](/docs/TALLY.md) before changing form configuration.
+An ordinary build uses English trip `6DDMge`, English shopping `Vpp72g`, French trip `laaPRo` and French shopping `Z99ple`. A different approved trip ID can be supplied with its matching variable. An explicit empty English trip value enables its local preview; explicit-empty French values produce noninteractive local-review placeholders. Preview, test, build and Cloudflare dry-run remain usable in those modes. These are public build settings, not secrets. See [Tally enquiry activation](/docs/TALLY.md) before changing form configuration.
 
 `dist/` is generated and must not be edited by hand. Wrangler uploads only that directory. The Cloudflare routing and cache behavior are documented in [Cloudflare operations](/docs/CLOUDFLARE.md).
 
@@ -59,8 +56,6 @@ The Docker image builds the same static output with Node and serves it from ngin
 
 ```sh
 docker build \
-  --build-arg FRENCH_TALLY_FORM_ID=<trip-id> \
-  --build-arg FRENCH_SHOPPING_TALLY_FORM_ID=<shopping-id> \
   --build-arg FRENCH_TESTIMONIAL_APPROVED=1 \
   --build-arg REQUIRE_PRODUCTION_READY=1 \
   --tag bento-kumiko .

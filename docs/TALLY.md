@@ -3,7 +3,7 @@ type: Guide
 title: "Tally enquiry activation"
 description: "English and French trip and shopping form build modes, ownership, readiness gates and verification steps."
 tags: [bento-kumiko, tally, forms, french]
-timestamp: 2026-10-30T17:06:11+09:00
+timestamp: 2026-10-30T17:10:40+09:00
 ---
 
 # Tally enquiry activation
@@ -12,7 +12,9 @@ The owner-supplied public trip form ID `6DDMge` is the ordinary-build default. `
 
 The published trip form view contains all 12 mapped fields and required states, including English/French and the three call choices. This integration work did not submit either form or verify their Tally account recipients, notifications, privacy wording, confirmation behavior or actual delivery; those remain owner checks.
 
-The owner creates and translates two separate French Tally forms. `FRENCH_TALLY_FORM_ID` configures the French trip form used by `/fr/` and `/fr/contact.html`; `FRENCH_SHOPPING_TALLY_FORM_ID` configures the French shopping form used by `/fr/shopping.html`. When either value is absent, only that French journey shows a disclosed, noninteractive placeholder. The repository does not contain, translate or imitate the owner’s French Tally questions.
+The owner created and published two separate French Tally forms. The CTO verified their public destinations read-only: trip `laaPRo` at `https://tally.so/r/laaPRo`, and shopping `Z99ple` at `https://tally.so/r/Z99ple`. They are ordinary-build defaults. `FRENCH_TALLY_FORM_ID` overrides the French trip form used by `/fr/` and `/fr/contact.html`; `FRENCH_SHOPPING_TALLY_FORM_ID` overrides the French shopping form used by `/fr/shopping.html`. An explicit empty value renders a disclosed, noninteractive placeholder for only that journey. The repository does not contain, translate or imitate the owner’s French Tally questions.
+
+Read-only destination verification does not prove recipient configuration, notifications, privacy wording, confirmation behavior or delivery. Those owner checks remain open, and no implementation check submits either form.
 
 Activating Tally replaces the current custom preview with a Tally iframe. The same fields can be recreated in Tally, but the iframe does not reuse the preview's HTML or styles, so exact visual parity is not automatic. Tally provides embeds for free and includes theme, color and Google Font choices in its free customization options; [custom CSS](https://tally.so/help/add-custom-styles) and [removing Tally branding](https://tally.so/help/embed-your-form) require Tally Pro. See Tally's [customization FAQ](https://tally.so/help/faq) for the current plan distinctions.
 
@@ -37,23 +39,23 @@ This table documents the existing English trip form and stable website vocabular
 
 ## Build modes and verification
 
-1. Run `pnpm build` to use the supplied English trip form `6DDMge` and English shopping form `Vpp72g`; both French journeys remain safe placeholders while their IDs are unavailable.
+1. Run `pnpm build` to use all four published defaults: English trip `6DDMge`, English shopping `Vpp72g`, French trip `laaPRo` and French shopping `Z99ple`.
 2. To use a different approved published trip form, build with only its ID, not a URL: `TALLY_FORM_ID=abc123 pnpm build`. This does not change the dedicated shopping form.
 3. For explicit local review of the trip preview, run `TALLY_FORM_ID= pnpm build`. The trip preview validates fields locally and sends nothing; the shopping page still uses its approved live Tally form.
-4. To review owner-supplied French forms locally, pass both published IDs: `FRENCH_TALLY_FORM_ID=<trip-id> FRENCH_SHOPPING_TALLY_FORM_ID=<shopping-id> pnpm build`. Values must be alphanumeric, distinct from each other and distinct from both English IDs. A single supplied French ID activates only its matching journey.
+4. To override a French form, pass its approved published ID. To review a safe placeholder, pass an explicit empty value, for example `FRENCH_TALLY_FORM_ID= pnpm build`. Values must be alphanumeric when nonempty, distinct from each other and distinct from both active English IDs. Each variable affects only its matching journey.
 5. Run `pnpm test`; its isolated checks cover the separated English defaults, trip override, explicit English preview, independent French placeholders/configuration, malformed or reused IDs, hosted fallbacks and the production gate without submitting data or changing an existing configured `dist/`. Synthetic French IDs exist only in these isolated temporary test outputs.
 6. Before production or after any Tally-side edit, verify all four responsive iframes and hosted-form fallbacks, then confirm the owner-side recipient, delivery, notification, privacy and confirmation settings in Tally. The shopping forms’ transport helper must state that return transport from Okayama is charged at cost for all four cities.
 
 ## Production-readiness gate
 
-Ordinary `pnpm build`, `pnpm test` and `pnpm cloudflare:dry-run` remain available while French forms are pending. The authorized production deploy must set `REQUIRE_PRODUCTION_READY=1` together with both real French IDs and `FRENCH_TESTIMONIAL_APPROVED=1`. The build stops before upload when an ID is missing, malformed, reused or shared between the two French journeys, or when testimonial approval has not been recorded for that release command. The exact release command is maintained in [Deployment](/docs/DEPLOYMENT.md).
+Ordinary `pnpm build`, `pnpm test` and `pnpm cloudflare:dry-run` remain available without publication approval and allow explicit-empty French placeholders. The `cloudflare:deploy` package script itself sets `REQUIRE_PRODUCTION_READY=1` for its build; a normal deploy can no longer bypass the gate. The guarded build stops before Wrangler runs when a French ID is missing, malformed, reused or shared between the two journeys, or when `FRENCH_TESTIMONIAL_APPROVED=1` has not been explicitly supplied after owner approval. The exact authorized release command is maintained in [Deployment](/docs/DEPLOYMENT.md).
 
 The testimonial flag records owner approval of the website translation only. It does not approve, create or change anything in Tally.
 
 The configured pages use Tally's official widget script and `dynamicHeight=1` embed option so each iframe follows its form across viewport sizes and form pages. The host page does not style the cross-origin forms. See Tally's [embed guide](https://tally.so/help/embed-your-form) and [widget embed documentation](https://developers.tally.so/widgets/embeds).
 
-For the optional Docker build, leave `TALLY_FORM_ID` unset to use the English trip default, pass another approved public trip ID as a build argument to override it, or pass an explicit empty value for English trip preview mode. The English shopping form remains `Vpp72g`. French values use the two build arguments named above. A production-ready container also passes `REQUIRE_PRODUCTION_READY=1` and the testimonial approval flag. Changing any mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
+For the optional Docker build, leave form arguments unset to use all four published defaults. Pass another approved public trip ID as a build argument to override its journey, or pass an explicit empty French value for placeholder mode. A production-ready container also passes `REQUIRE_PRODUCTION_READY=1` and the testimonial approval flag. Changing any mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
 
 ## Privacy behavior
 
-In English trip preview mode, text controls have no submission names, the form uses non-network `dialog` submission semantics, and JavaScript only reports completeness in the current DOM. French placeholders contain no controls at all. Neither mode uses logs, query strings, cookies, local storage or session storage. In configured mode, the visitor submits directly within the relevant Tally form and can open the same published form on Tally when the iframe is unavailable.
+In English trip preview mode, text controls have no submission names, the form uses non-network `dialog` submission semantics, and JavaScript only reports completeness in the current DOM. Explicit-empty French placeholders contain no controls at all. Neither mode uses logs, query strings, cookies, local storage or session storage. In configured mode, the visitor submits directly within the relevant Tally form and can open the same published form on Tally when the iframe is unavailable.

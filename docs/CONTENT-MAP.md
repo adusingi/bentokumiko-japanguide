@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko content map"
 description: "Bilingual ownership map for public pages, shared content, approved commercial copy and pending owner material."
 tags: [bento-kumiko, content, website, ownership, french]
-timestamp: 2026-10-30T17:06:11+09:00
+timestamp: 2026-10-30T17:10:40+09:00
 ---
 
 # Content map
@@ -39,4 +39,4 @@ Kumiko has chosen not to use a personal portrait, so the site has no portrait or
 
 ## External content ownership
 
-English trip and shopping submissions occur in separate existing Tally forms. French trip and shopping submissions require two additional owner-created forms; until their IDs are supplied, the French pages contain noninteractive placeholders. Recipients, notifications, privacy and confirmation settings are managed outside this repository and require owner verification. Both shopping forms’ transport helper must match the approved all-city surcharge wording. See [owner follow-ups](/docs/TOMORROW.md).
+English trip and shopping submissions occur in separate existing Tally forms. The owner-created French trip form `laaPRo` and shopping form `Z99ple` are now the ordinary defaults for their matching pages; explicit-empty overrides retain noninteractive local-review placeholders. Their public destinations were verified read-only, but recipients, notifications, privacy wording, confirmation behavior and delivery remain external owner checks. Both shopping forms’ transport helper must match the approved all-city surcharge wording. See [owner follow-ups](/docs/TOMORROW.md).

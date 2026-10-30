@@ -64,4 +64,8 @@
   }
   updateLanguageLinks();
   window.addEventListener("hashchange", updateLanguageLinks);
+  window.addEventListener("bento:locationchange", updateLanguageLinks);
+  document.addEventListener("click", function (event) {
+    if (event.target.closest("[data-language-alternate]")) updateLanguageLinks();
+  }, true);
 }());

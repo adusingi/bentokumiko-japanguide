@@ -9,8 +9,8 @@ import { canonicalFor, pages, publicPageKeys } from "./src/i18n/site.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const tallyFormId = process.env.TALLY_FORM_ID ?? "6DDMge";
 const shoppingTallyFormId = "Vpp72g";
-const frenchTallyFormId = process.env.FRENCH_TALLY_FORM_ID ?? "";
-const frenchShoppingTallyFormId = process.env.FRENCH_SHOPPING_TALLY_FORM_ID ?? "";
+const frenchTallyFormId = process.env.FRENCH_TALLY_FORM_ID ?? "laaPRo";
+const frenchShoppingTallyFormId = process.env.FRENCH_SHOPPING_TALLY_FORM_ID ?? "Z99ple";
 const productionReadinessRequired = process.env.REQUIRE_PRODUCTION_READY === "1";
 const frenchTestimonialApproved = process.env.FRENCH_TESTIMONIAL_APPROVED === "1";
 

@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko content map"
 description: "Bilingual ownership map for public pages, shared content, approved commercial copy and pending owner material."
 tags: [bento-kumiko, content, website, ownership, french]
-timestamp: 2026-10-30T18:05:02+09:00
+timestamp: 2026-10-30T23:23:04+09:00
 ---
 
 # Content map
@@ -35,7 +35,7 @@ Historic sample-trip costs remain clearly illustrative and are not current quote
 
 ## Testimonials
 
-The English homepage publishes the approved Everyln & Fabiola testimonial. The French homepage and About page publish the owner-supplied, approved original French testimonial attributed to `Heri. R`; its spelling, punctuation and grammar remain verbatim. The separate Heri and Peter cards remain preserved but hidden in English source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
+The English homepage publishes the approved Everyln & Fabiola testimonial. The French homepage and About page publish the owner-supplied, approved French testimonial attributed to `Heri. R`; BK-026 corrected only its spelling, punctuation and grammar while preserving the original guest experience, sentiment and endorsement strength. The untouched original remains in the ticket evidence. The separate Heri and Peter cards remain preserved but hidden in English source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
 
 Kumiko has chosen not to use a personal portrait, so the site has no portrait or portrait placeholder.
 

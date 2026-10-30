@@ -349,7 +349,7 @@ async function inspectSite(directory, modes) {
   assert(englishIndex.includes("Everyln &amp; Fabiola"), "English homepage testimonial changed during the French revision");
   assert(englishBlog.includes("5 things our guests learned in Japan"), "English blog lost the supplied guest tips");
   assert(frenchBlog.includes("5 leçons apprises par mes voyageurs au Japon"), "French blog lost the authored guest lessons");
-  const approvedFrenchTestimonial = "Pour notre premier voyage au Japon, nous pensions à un séjour court, fort en souvenirs. Les enfants voulaient de l'aventure, les parents voulaient découvrir les uniques attraits de la culture Japonaise. Kumiko nous ont préparé soigneusement une sélection d'hotels, de restaurants ainsi que les sites principaux à visiter. On a découvert un excellent restaurant basque, on s'est amusé à Universal Studios Japan, et on a aimé les hotels qu'ils ont choisi, et plus. Je recommande!";
+  const approvedFrenchTestimonial = "Pour notre premier voyage au Japon, nous pensions à un séjour court, fort en souvenirs. Les enfants voulaient de l’aventure, les parents voulaient découvrir les attraits uniques de la culture japonaise. Kumiko nous a préparé soigneusement une sélection d’hôtels, de restaurants ainsi que les principaux sites à visiter. On a découvert un excellent restaurant basque, on s’est amusé à Universal Studios Japan, et on a aimé les hôtels qu’elle a choisis, et bien plus encore. Je recommande !";
   for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout]]) {
     assert(html.includes(approvedFrenchTestimonial), `${output} lacks the exact approved Heri testimonial`);
     assert(html.includes('<p class="attribution">— Heri. R</p>'), `${output} lacks the exact Heri. R attribution`);
@@ -358,6 +358,8 @@ async function inspectSite(directory, modes) {
     }
   }
   assert(frenchIndex.includes("Mes offres pour vous accompagner"), "French homepage lacks the approved offers heading");
+  assert(frenchIndex.includes("Bento Kumiko · Spécialiste du Japon"), "French homepage lacks the approved specialist wording");
+  assert(frenchIndex.includes("<title>Bento Kumiko — Voyage au Japon sur mesure</title>"), "French homepage lacks the approved page title");
   assert(frenchIndex.includes("Un carnet de voyage et une web app"), "French homepage lacks the approved web app heading");
   assert(frenchIndex.includes("<h3>Japon sur mesure</h3>"), "French homepage lacks the approved trip heading");
   assert(frenchIndex.includes("<h3>Faire du shopping avec Kumiko</h3>"), "French homepage lacks the approved shopping heading");
@@ -365,6 +367,8 @@ async function inspectSite(directory, modes) {
   assert(!frenchIndex.includes('class="highlights"'), "French Heri testimonial retains E&F-specific highlights");
   assert(!frenchIndex.includes("Une leçon sincère, désormais intégrée à chaque voyage"), "French Heri testimonial retains the E&F-specific lesson");
   assert(frenchIndex.includes("Votre voyage au Japon, <em>sur mesure</em>."), "French homepage lost its mobile-safe hero wording");
+  assert(frenchAbout.includes("<h1>Le Japon, pour un voyage mémorable.</h1>"), "French About page lacks the approved heading");
+  assert(frenchAbout.includes("Une famille de voyageurs"), "French About page lacks the approved family wording");
   for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout], ["fr/blog.html", frenchBlog]]) {
     assert(!html.includes("voyageuses"), `${output} guesses the guests' gender`);
     assert(!html.includes("mes voyageuses"), `${output} retains a gendered guest reference`);

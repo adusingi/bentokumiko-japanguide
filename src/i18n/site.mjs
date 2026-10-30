@@ -59,7 +59,7 @@ export const pages = {
         description: "Kumiko, a Japan-based travel planner, builds personal day-by-day Japan itineraries with stays, transport and a clear budget, delivered as a travel book and an app.",
       },
       fr: {
-        title: "Bento Kumiko — Organisation de voyages au Japon",
+        title: "Bento Kumiko — Voyage au Japon sur mesure",
         description: "Kumiko prépare au Japon des itinéraires sur mesure, jour par jour, avec hébergements, transports et budget clair, livrés sous forme de carnet de voyage et d’application.",
       },
     },

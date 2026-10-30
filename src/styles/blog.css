@@ -100,9 +100,10 @@
   .places-foot{
     margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; gap:12px 26px; justify-content:space-between;
   }
+  .places-foot > *{min-width:0}
   .places-foot p{margin:0; color:var(--soft); max-width:38em}
   .places-foot p strong{color:var(--ink)}
-  .places-foot a{font-weight:700; white-space:nowrap}
+  .places-foot a{font-weight:700; white-space:normal; overflow-wrap:anywhere}
   @media (max-width:760px){ .places-grid{grid-template-columns:1fr} .place-card img{height:200px} }
 
   /* ---------- more to come ---------- */

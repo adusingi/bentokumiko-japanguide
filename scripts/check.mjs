@@ -285,6 +285,7 @@ async function inspectSite(directory, modes) {
 
   const englishIndex = htmlByOutput.get("index.html");
   const frenchIndex = htmlByOutput.get("fr/index.html");
+  const frenchAbout = htmlByOutput.get("fr/a-propos.html");
   const englishBlog = htmlByOutput.get("blog.html");
   const frenchBlog = htmlByOutput.get("fr/blog.html");
   assert(!englishIndex.includes('id="blog"'), "English homepage still contains the removed blog section");
@@ -293,6 +294,11 @@ async function inspectSite(directory, modes) {
   assert(frenchIndex.includes("Traduction française"), "French testimonial is not labeled as a translation");
   assert(frenchIndex.includes('lang="en"'), "French testimonial does not preserve its English original for comparison");
   assert(frenchIndex.includes("Prévisualisation locale"), "Unapproved French testimonial lacks its local-review disclosure");
+  assert(frenchIndex.includes("Votre voyage au Japon, <em>sur mesure</em>."), "French homepage lost its mobile-safe hero wording");
+  for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout], ["fr/blog.html", frenchBlog]]) {
+    assert(!html.includes("voyageuses"), `${output} guesses the guests' gender`);
+    assert(!html.includes("mes voyageuses"), `${output} retains a gendered guest reference`);
+  }
   assert(frenchIndex.includes('data-preserved-fragments="pricing,testimonials"'), "Homepage language switch cannot preserve approved fragments");
   assert(htmlByOutput.get("fr/services.html").includes('data-preserved-fragments="service-trip,shopping"'), "Service language switch cannot preserve approved fragments");
   assert(!frenchIndex.includes("https://tally.so/embed/6DDMge"), "French homepage silently embeds the English trip form");
@@ -440,6 +446,12 @@ const serviceTabsScript = await readFile(path.join(root, "src/assets/scripts/ser
 verifyServiceLanguageSwitch(siteScript, serviceTabsScript);
 const baseStyles = await readFile(path.join(root, "src/styles/base.css"), "utf8");
 assert(!/\.tally-frame\s*\{[^}]*min-height/s.test(baseStyles), "Tally frame CSS blocks dynamic-height shrinking");
+const indexStyles = await readFile(path.join(root, "src/styles/index.css"), "utf8");
+assert(/\.hero-grid\s*>\s*\*\s*\{\s*min-width:\s*0\s*\}/.test(indexStyles), "Hero grid children can force horizontal overflow");
+assert(/grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(indexStyles), "Mobile hero grid retains an auto min-content track");
+const blogStyles = await readFile(path.join(root, "src/styles/blog.css"), "utf8");
+assert(/\.places-foot\s*>\s*\*\s*\{\s*min-width:\s*0\s*\}/.test(blogStyles), "Blog footer flex children cannot shrink");
+assert(/\.places-foot a\s*\{[^}]*white-space:\s*normal[^}]*overflow-wrap:\s*anywhere/.test(blogStyles), "Long blog map links cannot wrap safely");
 const dockerfile = await readFile(path.join(root, "Dockerfile"), "utf8");
 for (const variable of ["TALLY_FORM_ID", "FRENCH_TALLY_FORM_ID", "FRENCH_SHOPPING_TALLY_FORM_ID", "REQUIRE_PRODUCTION_READY"]) {
   assert(dockerfile.includes(`ARG ${variable}`), `Docker build does not expose ${variable}`);

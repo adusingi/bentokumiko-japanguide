@@ -3,6 +3,8 @@
   var header = document.getElementById("siteHeader");
   var toggle = document.getElementById("navToggle");
   var nav = document.getElementById("mainNav");
+  var openLabel = toggle.dataset.openLabel;
+  var closeLabel = toggle.dataset.closeLabel;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function onScroll() {
@@ -11,7 +13,7 @@
   function closeMenu() {
     nav.classList.remove("open");
     toggle.setAttribute("aria-expanded", "false");
-    toggle.setAttribute("aria-label", "Open menu");
+    toggle.setAttribute("aria-label", openLabel);
     toggle.textContent = "☰";
   }
 
@@ -20,7 +22,7 @@
   toggle.addEventListener("click", function () {
     var open = nav.classList.toggle("open");
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.setAttribute("aria-label", open ? closeLabel : openLabel);
     toggle.textContent = open ? "✕" : "☰";
   });
   nav.addEventListener("click", function (event) {
@@ -49,4 +51,17 @@
   } else {
     document.querySelectorAll(".reveal").forEach(function (element) { element.classList.add("in"); });
   }
+
+  var preservedFragments = (document.body.dataset.preservedFragments || "").split(",").filter(Boolean);
+  function updateLanguageLinks() {
+    var currentFragment = window.location.hash.slice(1);
+    document.querySelectorAll("[data-language-alternate]").forEach(function (link) {
+      link.dataset.baseHref = link.dataset.baseHref || link.getAttribute("href");
+      var target = new URL(link.dataset.baseHref, window.location.origin);
+      target.hash = preservedFragments.includes(currentFragment) ? currentFragment : "";
+      link.href = target.pathname + target.hash;
+    });
+  }
+  updateLanguageLinks();
+  window.addEventListener("hashchange", updateLanguageLinks);
 }());

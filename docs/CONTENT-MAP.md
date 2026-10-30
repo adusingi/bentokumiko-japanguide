@@ -1,24 +1,28 @@
 ---
 type: Guide
 title: "Bento Kumiko content map"
-description: "Ownership map for public pages, shared content, approved commercial copy and pending owner material."
-tags: [bento-kumiko, content, website, ownership]
-timestamp: 2026-10-30T11:41:27+09:00
+description: "Bilingual ownership map for public pages, shared content, approved commercial copy and pending owner material."
+tags: [bento-kumiko, content, website, ownership, french]
+timestamp: 2026-10-30T17:06:11+09:00
 ---
 
 # Content map
 
-| Public URL | Authored source | Purpose |
+| English URL and source | French URL and source | Purpose |
 | --- | --- | --- |
-| `/` and `/index.html` | `src/pages/index.html` | Homepage, service overview, pricing, sample trip, approved testimonial and trip enquiry |
-| `/about.html` | `src/pages/about.html` | Kumiko's background, approach and languages |
-| `/service.html` | `src/pages/service.html` | Mobile-first trip-planning and shopping selector with both services available without JavaScript |
-| `/shopping.html` | `src/pages/shopping.html` | Shopping service details and dedicated shopping Tally form |
-| `/blog.html` | `src/pages/blog.html` | Travel notes, guest lessons and personally visited places |
-| `/enquire.html` | `src/pages/enquire.html` | Trip-planning expectations and dedicated trip Tally form |
-| any missing path | `src/pages/404.html` | Branded 404 response |
+| `/`, `/index.html` — `src/pages/index.html` | `/fr/`, `/fr/index.html` — `src/pages/fr/index.html` | Homepage, service overview, pricing, sample trip, testimonial and trip enquiry |
+| `/about.html` — `src/pages/about.html` | `/fr/a-propos.html` — `src/pages/fr/a-propos.html` | Kumiko's background, approach and languages |
+| `/service.html` — `src/pages/service.html` | `/fr/services.html` — `src/pages/fr/services.html` | Mobile-first service selector with both services available without JavaScript |
+| `/shopping.html` — `src/pages/shopping.html` | `/fr/shopping.html` — `src/pages/fr/shopping.html` | Shopping details and the locale’s dedicated shopping Tally journey |
+| `/blog.html` — `src/pages/blog.html` | `/fr/blog.html` — `src/pages/fr/blog.html` | Travel notes, guest lessons and personally visited places |
+| `/enquire.html` — `src/pages/enquire.html` | `/fr/contact.html` — `src/pages/fr/contact.html` | Trip-planning expectations and the locale’s dedicated trip Tally journey |
+| root missing path — `src/pages/404.html` | missing path under `/fr/` — `src/pages/fr/404.html` | Localized branded 404 response |
 
-Shared navigation, metadata and footer live in `src/components/layout.mjs`. Shared form rendering lives in `src/components/enquiry.mjs`; build modes and external form ownership are documented in [Tally enquiry activation](/docs/TALLY.md). Presentation lives in `src/styles/`, and extracted local photographs live in `src/assets/images/` with alternative text in their page sources.
+Shared navigation and footer live in `src/components/layout.mjs`. The compact route, locale and metadata map lives in `src/i18n/site.mjs`. Shared form rendering lives in `src/components/enquiry.mjs`; build modes and external form ownership are documented in [Tally enquiry activation](/docs/TALLY.md). Presentation lives in `src/styles/`, and extracted local photographs live in `src/assets/images/` with localized alternative text in their page sources.
+
+## Keeping both languages current
+
+Treat each row above as one content pair. Any change to English facts, commercial wording, links, image meaning, metadata or interactive labels must review and normally update the corresponding French source and `src/i18n/site.mjs` in the same change. If the owner intentionally postpones a translation, record the exact page and English change in [Owner follow-ups](/docs/TOMORROW.md) before release; do not silently leave a stale translation. Automated checks verify routes, links, metadata relationships, pricing/form invariants and placeholders, but editorial equivalence still needs human review.
 
 ## Approved service copy
 
@@ -29,10 +33,10 @@ Historic sample-trip costs remain clearly illustrative and are not current quote
 
 ## Testimonials
 
-The homepage publishes the approved Everyln & Fabiola testimonial. Secondary Heri and Peter cards remain preserved but hidden in source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
+The English homepage publishes the approved Everyln & Fabiola testimonial. The French local-review build shows a labeled proposed translation and preserves the English original for comparison. `FRENCH_TESTIMONIAL_APPROVED=1` must record owner publication approval in the guarded release command; until then, the French page visibly identifies the translation as a local preview. Secondary Heri and Peter cards remain preserved but hidden in English source. Marc Lee wording is still pending owner supply and approval; do not publish an attribution, rating or quote until approved words are available.
 
 Kumiko has chosen not to use a personal portrait, so the site has no portrait or portrait placeholder.
 
 ## External content ownership
 
-Trip and shopping submissions occur in separate Tally forms. Their recipient, notification, privacy and confirmation settings are managed outside this repository and still require owner verification. The shopping form's transport helper must match the approved all-city surcharge wording; its previous Tokyo-only wording has not been reverified. See [owner follow-ups](/docs/TOMORROW.md).
+English trip and shopping submissions occur in separate existing Tally forms. French trip and shopping submissions require two additional owner-created forms; until their IDs are supplied, the French pages contain noninteractive placeholders. Recipients, notifications, privacy and confirmation settings are managed outside this repository and require owner verification. Both shopping forms’ transport helper must match the approved all-city surcharge wording. See [owner follow-ups](/docs/TOMORROW.md).

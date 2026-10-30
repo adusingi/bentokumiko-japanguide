@@ -31,18 +31,27 @@ export function createPreviewServer(rootDirectory) {
       response.end("Bad Request\n");
       return;
     }
-    const requested = pathname === "/" ? "/index.html" : pathname;
+    if (pathname === "/fr") {
+      response.writeHead(308, { Location: "/fr/" });
+      response.end();
+      return;
+    }
+    const requested = pathname === "/"
+      ? "/index.html"
+      : pathname === "/fr/"
+        ? "/fr/index.html"
+        : pathname;
     let file = path.resolve(root, `.${requested}`);
     let status = 200;
     const relative = path.relative(root, file);
     if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
-      file = path.join(root, "404.html");
+      file = path.join(root, pathname.startsWith("/fr/") ? "fr/404.html" : "404.html");
       status = 404;
     }
     try {
       if (!(await stat(file)).isFile()) throw new Error("not a file");
     } catch {
-      file = path.join(root, "404.html");
+      file = path.join(root, pathname.startsWith("/fr/") ? "fr/404.html" : "404.html");
       status = 404;
     }
     response.writeHead(status, { "Content-Type": mime[path.extname(file)] || "application/octet-stream" });

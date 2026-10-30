@@ -3,7 +3,7 @@ type: Guide
 title: "Bento Kumiko website"
 description: "Project overview, local workflow, architecture and release documentation for the Bento Kumiko website."
 tags: [bento-kumiko, website, github, cloudflare]
-timestamp: 2026-10-30T11:44:23+09:00
+timestamp: 2026-10-30T17:07:22+09:00
 ---
 
 # Bento Kumiko
@@ -18,7 +18,8 @@ timestamp: 2026-10-30T11:44:23+09:00
 - A mobile-first service selector that remains usable without JavaScript
 - Travel notes and destination content in the blog
 - The approved Everyln & Fabiola homepage testimonial
-- Seven generated HTML pages, including the branded `404.html`
+- Complete English and French editions with equivalent page-level language links
+- Fourteen generated HTML pages, including English and nested French 404 pages
 
 ## Quick start
 
@@ -39,25 +40,27 @@ Open `http://127.0.0.1:4173`. Rebuild after changing source content or styles.
 | Command | Purpose |
 | --- | --- |
 | `pnpm test` | Build and run output, link, asset and form-mode checks |
-| `pnpm build` | Generate the production-ready static site in `dist/` |
+| `pnpm build` | Generate static review output in `dist/`; guarded variables are required for release |
 | `pnpm preview` | Serve the current `dist/` locally on port 4173 |
 | `pnpm cloudflare:dev` | Build and run the site in the local Wrangler runtime |
 | `pnpm cloudflare:dry-run` | Build and validate the Cloudflare upload without deploying |
 | `pnpm cloudflare:deploy` | Build and deploy through authenticated Wrangler; release authority required |
 
-An ordinary build uses the approved trip form `6DDMge` and shopping form `Vpp72g`. `TALLY_FORM_ID` can override or explicitly disable only the trip form; see [Tally enquiry activation](/docs/TALLY.md).
+An ordinary build preserves the approved English trip form `6DDMge` and shopping form `Vpp72g`. `TALLY_FORM_ID` can override or explicitly disable only the English trip form. Until the owner supplies two independently published French form IDs, French builds show disclosed, noninteractive placeholders. Ordinary preview, build, test and dry-run commands do not require those IDs; the documented production command enables a mandatory readiness gate. See [Tally enquiry activation](/docs/TALLY.md).
 
 ## Architecture
 
 The project has no application backend or SQLite database. `build.mjs` combines authored pages and shared components, copies local assets and Cloudflare routing files, and writes deterministic static output to `dist/`. Configured enquiries are submitted inside Tally's hosted forms.
 
 - `src/pages/`: page-specific semantic HTML
+- `src/pages/fr/`: complete authored French pages
 - `src/components/`: shared layout and enquiry rendering
+- `src/i18n/`: compact locale, route and metadata map
 - `src/styles/`: shared and page-specific presentation
 - `src/assets/`: local images, favicon and browser scripts
 - `build.mjs`: static build and page metadata
 - `scripts/check.mjs`: output and configuration checks
-- `cloudflare/`: static headers and the root rewrite copied into the build
+- `cloudflare/`: static headers and narrow root/French rewrites copied into the build
 - `wrangler.jsonc`: Cloudflare Workers Static Assets configuration
 - `Dockerfile` and `nginx/`: optional container-hosting alternative, not the active host
 

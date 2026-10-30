@@ -1,9 +1,9 @@
 ---
 type: Guide
 title: "Bento Kumiko Cloudflare operations"
-description: "Current Workers Static Assets, DNS safety, release verification and rollback guidance."
-tags: [bento-kumiko, cloudflare, ovh, dns, deployment]
-timestamp: 2026-10-30T11:41:27+09:00
+description: "Bilingual Workers Static Assets routing, DNS safety, guarded release verification and rollback guidance."
+tags: [bento-kumiko, cloudflare, ovh, dns, deployment, french]
+timestamp: 2026-10-30T17:06:11+09:00
 ---
 
 # Cloudflare operations
@@ -12,7 +12,7 @@ timestamp: 2026-10-30T11:41:27+09:00
 
 The `bento-kumiko` Cloudflare Worker serves the generated `dist/` directory through Workers Static Assets at `bentokumiko.com` and `www.bentokumiko.com`. Cloudflare is authoritative for DNS and DNSSEC. OVHcloud remains the domain registrar and renewal provider.
 
-`wrangler.jsonc` deliberately contains only static-assets configuration: no Worker script, route declaration, database binding or account identifier. Existing `.html` URLs remain canonical, missing assets use `404.html`, and the generated `_redirects` file maps only `/` to `/index.html`. The generated `_headers` file defines security and cache headers.
+`wrangler.jsonc` deliberately contains only static-assets configuration: no Worker script, route declaration, database binding or account identifier. Existing English `.html` URLs remain canonical. French pages use `/fr/` plus explicit French `.html` addresses. The generated `_redirects` file narrowly rewrites `/` and `/fr/` to their index files and redirects `/fr` to `/fr/`. Cloudflare’s nearest-directory error handling uses `/404.html` for root paths and `/fr/404.html` for nested French paths. The generated `_headers` file defines security and cache headers.
 
 The site has no database. Configured trip and shopping enquiries are hosted by Tally; adding D1 or another backend requires a separate approved design and privacy review.
 
@@ -32,10 +32,10 @@ These local checks cannot prove account permissions, public DNS, certificates, r
 
 ## Production release
 
-Production is deployed with manager-authorized local Wrangler from the accepted `main` revision:
+Production is deployed with manager-authorized local Wrangler from the accepted `main` revision and the readiness variables documented in [Deployment](/docs/DEPLOYMENT.md):
 
 ```sh
-pnpm cloudflare:deploy
+FRENCH_TALLY_FORM_ID=<trip-id> FRENCH_SHOPPING_TALLY_FORM_ID=<shopping-id> FRENCH_TESTIMONIAL_APPROVED=1 REQUIRE_PRODUCTION_READY=1 pnpm cloudflare:deploy
 ```
 
 The command rebuilds the site before upload. It is intentionally separate from `pnpm test` and must not be run without release authority. GitHub pushes do not automatically deploy this Worker. GitHub Actions is configured to check pushes and pull requests, but verify the actual run rather than assuming it passed.
@@ -43,10 +43,10 @@ The command rebuilds the site before upload. It is intentionally separate from `
 After deployment, verify:
 
 - apex and `www` HTTPS behavior
-- homepage, service, shopping and trip-enquiry pages
-- `/health` and the branded 404 status
+- all twelve English and French canonical pages, plus the `/fr` redirect
+- `/health`, the root branded 404 and nested French branded 404 statuses
 - cache and security headers for HTML, styles, scripts and images
-- both Tally embeds and hosted-form fallback links, without submitting real customer data
+- all four Tally embeds and hosted-form fallback links, without submitting real customer data
 
 See the [deployment guide](/docs/DEPLOYMENT.md) for the complete promotion and rollback sequence.
 

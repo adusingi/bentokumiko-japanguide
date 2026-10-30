@@ -22,7 +22,7 @@
     panels.forEach(function (panel) {
       panel.hidden = panel.dataset.servicePanel !== key;
     });
-    selectedService.textContent = key === "trip" ? "Trip planning" : "Shopping assistance";
+    selectedService.textContent = key === "trip" ? chooser.dataset.tripLabel : chooser.dataset.shoppingLabel;
   }
 
   tablist.setAttribute("role", "tablist");

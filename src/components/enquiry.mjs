@@ -13,16 +13,38 @@ export const enquiryFields = [
   ["call_preference", "Call preference", "optional"],
 ];
 
-export function renderEnquiry(tallyFormId, {
-  iframeTitle = "Japan trip enquiry",
-  fallbackLinkText = "open the enquiry form directly on Tally",
-} = {}) {
+const configuredCopy = {
+  en: {
+    trip: ["Japan trip enquiry", "open the enquiry form directly on Tally"],
+    shopping: ["Shopping day enquiry", "open the shopping enquiry form directly on Tally"],
+    loadFailure: "If the form does not load",
+  },
+  fr: {
+    trip: ["Formulaire de demande pour un voyage au Japon", "ouvrez directement le formulaire de voyage sur Tally"],
+    shopping: ["Formulaire de demande pour une journée shopping", "ouvrez directement le formulaire shopping sur Tally"],
+    loadFailure: "Si le formulaire ne se charge pas",
+  },
+};
+
+export function renderEnquiry(tallyFormId, { locale = "en", kind = "trip" } = {}) {
+  const copy = configuredCopy[locale];
   if (tallyFormId) {
     const embedUrl = `https://tally.so/embed/${tallyFormId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
     const hostedUrl = `https://tally.so/r/${tallyFormId}`;
     return `<div class="form-card tally-card" data-form-mode="tally">
-        <iframe class="tally-frame" data-tally-src="${embedUrl}" title="${iframeTitle}" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
-        <p class="f-note">If the form does not load, <a href="${hostedUrl}">${fallbackLinkText}</a>.</p>
+        <iframe class="tally-frame" data-tally-src="${embedUrl}" title="${copy[kind][0]}" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+        <p class="f-note">${copy.loadFailure}, <a href="${hostedUrl}">${copy[kind][1]}</a>.</p>
+      </div>`;
+  }
+
+  if (locale === "fr") {
+    const service = kind === "shopping" ? "journée shopping" : "voyage sur mesure";
+    return `<div class="form-card french-form-placeholder" data-form-mode="placeholder" role="status">
+        <div class="form-status preview-status">
+          <strong>Le formulaire français est en préparation.</strong>
+          <span>La propriétaire prépare un formulaire distinct pour votre demande de ${service}. Aucun renseignement ne peut être saisi, envoyé ou enregistré ici.</span>
+        </div>
+        <p class="f-note">Cette prévisualisation locale ne remplace pas le formulaire français qui sera publié avant la mise en ligne.</p>
       </div>`;
   }
 

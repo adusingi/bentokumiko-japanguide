@@ -1,60 +1,83 @@
 ---
 type: Guide
 title: "Bento Kumiko website"
-description: "Build, preview, deployment preparation and ownership guide for the Bento Kumiko static website."
-tags: [bento-kumiko, website, operations, cloudflare]
-timestamp: 2026-10-28T17:18:15+09:00
+description: "Project overview, local workflow, architecture and release documentation for the Bento Kumiko website."
+tags: [bento-kumiko, website, github, cloudflare]
+timestamp: 2026-10-30T11:44:23+09:00
 ---
 
-# Bento Kumiko website
+# Bento Kumiko
 
-A small static build preserving the supplied Bento Kumiko design and copy. Shared layout and form components build six pages into `dist/`; nginx or Cloudflare Workers Static Assets can serve that output.
+[Bento Kumiko](https://bentokumiko.com) is a Japan travel-planning website for personal itineraries and guided shopping days with Kumiko. The site is a small, maintainable static build designed for mobile use and hosted with Cloudflare Workers Static Assets.
 
-## Work locally
+## Current site
 
-Requires Node.js 20 or newer and pnpm `12.9.1`, pinned by `package.json`.
+- Personal Japan trip planning with day-by-day plans, stays, transport and budgets
+- Shopping assistance in Kyoto, Osaka, Hiroshima and Tokyo
+- Dedicated Tally enquiry forms for trip planning and shopping
+- A mobile-first service selector that remains usable without JavaScript
+- Travel notes and destination content in the blog
+- The approved Everyln & Fabiola homepage testimonial
+- Seven generated HTML pages, including the branded `404.html`
+
+## Quick start
+
+Requires Node.js 20 or newer and pnpm `12.9.1`, pinned in `package.json`.
 
 ```sh
+git clone https://github.com/adusingi/bentokumiko-japanguide.git
+cd bentokumiko-japanguide
 pnpm install --frozen-lockfile
 pnpm build
 pnpm preview
 ```
 
-Open `http://127.0.0.1:4173`. The preview serves generated files, so rebuild after content or style changes. Run all integrity and form-mode checks with:
+Open `http://127.0.0.1:4173`. Rebuild after changing source content or styles.
 
-```sh
-pnpm test
-```
+## Useful commands
 
-Checks build into disposable directories with explicitly controlled form settings; they do not replace an existing `dist/`, even when `TALLY_FORM_ID` is exported. The normal `pnpm build` replaces only the repository's generated `dist/`. A custom `SITE_OUTPUT_DIR` must be outside the repository and either new or empty; populated paths and symbolic-link targets are rejected rather than erased.
+| Command | Purpose |
+| --- | --- |
+| `pnpm test` | Build and run output, link, asset and form-mode checks |
+| `pnpm build` | Generate the production-ready static site in `dist/` |
+| `pnpm preview` | Serve the current `dist/` locally on port 4173 |
+| `pnpm cloudflare:dev` | Build and run the site in the local Wrangler runtime |
+| `pnpm cloudflare:dry-run` | Build and validate the Cloudflare upload without deploying |
+| `pnpm cloudflare:deploy` | Build and deploy through authenticated Wrangler; release authority required |
 
-An ordinary `pnpm build` embeds the owner-supplied public Tally form `6DDMge`. Use `TALLY_FORM_ID=abc123 pnpm build` to override it with another approved public form, or `TALLY_FORM_ID= pnpm build` to explicitly produce the non-submitting local preview. The setting is public build configuration, not a secret.
+An ordinary build uses the approved trip form `6DDMge` and shopping form `Vpp72g`. `TALLY_FORM_ID` can override or explicitly disable only the trip form; see [Tally enquiry activation](/docs/TALLY.md).
 
-Cloudflare Workers Static Assets preparation can be checked without logging in or deploying:
+## Architecture
 
-```sh
-pnpm cloudflare:dry-run
-```
+The project has no application backend or SQLite database. `build.mjs` combines authored pages and shared components, copies local assets and Cloudflare routing files, and writes deterministic static output to `dist/`. Configured enquiries are submitted inside Tally's hosted forms.
 
-For local Cloudflare emulation, eventual deployment and the Git/OVH cutover checklist, use the [Cloudflare preparation guide](/docs/CLOUDFLARE.md). The repository contains configuration only; it does not imply that a GitHub repository, Cloudflare project, DNS zone or custom domain has been created.
-
-The live form uses Tally's official responsive embed loader and retains a direct hosted-form fallback. Field mapping, explicit preview mode and the remaining owner-side delivery checks are documented in [Tally activation](/docs/TALLY.md).
-
-## Source map
-
-- `src/pages/`: page-specific semantic HTML content
+- `src/pages/`: page-specific semantic HTML
 - `src/components/`: shared layout and enquiry rendering
-- `src/styles/base.css`: tokens, navigation, footer, focus, motion and shared form styles
-- `src/styles/`: page-specific presentation
+- `src/styles/`: shared and page-specific presentation
 - `src/assets/`: local images, favicon and browser scripts
-- `cloudflare/`: authored static-asset headers and root rewrite copied into `dist/`
-- `build.mjs`: deterministic static build
-- `scripts/check.mjs`: output, link, asset and form-state checks
-- `wrangler.jsonc`: static-only Cloudflare Workers configuration; no Worker script, database binding or live domain
-- `nginx/default.conf`: production routing, caching and security headers
+- `build.mjs`: static build and page metadata
+- `scripts/check.mjs`: output and configuration checks
+- `cloudflare/`: static headers and the root rewrite copied into the build
+- `wrangler.jsonc`: Cloudflare Workers Static Assets configuration
+- `Dockerfile` and `nginx/`: optional container-hosting alternative, not the active host
 
-See the [content map](/docs/CONTENT-MAP.md), [deployment guide](/docs/DEPLOYMENT.md), [Cloudflare preparation guide](/docs/CLOUDFLARE.md) and [owner checklist](/docs/TOMORROW.md).
+## Documentation
 
-## Boundaries
+- [Contributing](/CONTRIBUTING.md)
+- [Deployment and rollback](/docs/DEPLOYMENT.md)
+- [Cloudflare operations](/docs/CLOUDFLARE.md)
+- [Content map](/docs/CONTENT-MAP.md)
+- [Tally enquiry activation](/docs/TALLY.md)
+- [Owner follow-ups](/docs/TOMORROW.md)
 
-The site does not book travel or call a Tally submission API. It has no application backend or SQLite database; configured enquiries go to Tally. Historic sample-trip costs are illustrative and are not current quotes. The repository contains no credentials or enquiry answers.
+## Release flow
+
+Changes are reviewed on `development` before an accepted revision is promoted to `main`. Production deployment is a separate, manager-authorized local Wrangler action from the accepted `main` revision; pushing to GitHub does not deploy the website. GitHub Actions is configured to run repository checks, but its presence is not evidence that a particular release passed remotely.
+
+Cloudflare currently serves `bentokumiko.com` and `www.bentokumiko.com`. OVHcloud remains the registrar and renewal provider. Operational details and rollback steps are maintained in the [deployment guide](/docs/DEPLOYMENT.md).
+
+## License and content rights
+
+The repository's source code is available under the [MIT License](/LICENSE).
+
+The Bento Kumiko brand identity, photographs, testimonials and third-party content retain their respective rights. The software license grants no rights to those materials.

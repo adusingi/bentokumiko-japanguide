@@ -1,33 +1,59 @@
 ---
 type: Guide
 title: "Bento Kumiko deployment"
-description: "Dokploy and Cloudflare deployment paths, branch ownership, configuration and rollback guide."
-tags: [bento-kumiko, dokploy, cloudflare, deployment]
-timestamp: 2026-10-28T17:18:15+09:00
+description: "Current Cloudflare release, verification and rollback process with an optional Docker alternative."
+tags: [bento-kumiko, cloudflare, deployment, rollback]
+timestamp: 2026-10-30T11:41:27+09:00
 ---
 
 # Deployment
 
-The site supports two independent hosting paths. The existing Docker image builds with Node and serves from nginx on container port `8080`. The prepared Cloudflare Workers path uploads only generated static assets from `dist/`; it has no Worker script or database binding. Both preserve `/health`, explicit `.html` links and the branded 404 response.
+The production site is hosted by the `bento-kumiko` Cloudflare Worker using Workers Static Assets. It serves `bentokumiko.com` and `www.bentokumiko.com`; Cloudflare is authoritative for DNS and DNSSEC, while OVHcloud remains the registrar and renewal provider.
 
-## Dokploy application
+The previous Dokploy site is stopped. The repository's Docker and nginx files remain a tested alternative packaging path, not the active production host.
 
-1. Create an Application from the GitHub repository and select the intended branch: `development` for a review environment, `main` for production.
-2. Choose **Dockerfile** build type. Set Dockerfile Path to `Dockerfile` and Docker Context Path to `.`. Leave Docker Build Stage empty so the final nginx stage is used. These fields follow Dokploy's current [Build Type guidance](https://docs.dokploy.com/docs/core/applications/build-type).
-3. Leave the public build-time argument `TALLY_FORM_ID` unset to use the supplied form `6DDMge`. Set another approved public ID to override it, or set an explicit empty value for a non-submitting preview deployment. Any change requires a rebuild/redeploy; complete the remaining owner-side checks in [Tally activation](/docs/TALLY.md) before production.
-4. Deploy, then configure the domain host `bentokumiko.com`, path `/`, container port `8080`, and HTTPS with Let's Encrypt. Dokploy distinguishes this internal routing port from a publicly exposed host port; see [Domains](https://docs.dokploy.com/docs/core/domains).
-5. Point the domain's DNS record to the Dokploy server, enable HTTPS, and verify `/health`, a known page and a deliberately missing path.
+## Release flow
 
-The nginx Content Security Policy permits Tally's official widget script and configured frame plus Google Fonts while denying framing of this site, plugins, cameras, microphones and geolocation. HTML revalidates; extracted content-addressed images cache for one year; CSS and JavaScript cache for one hour.
+1. Prepare and review changes on `development`.
+2. Run the repository checks and obtain owner acceptance before promoting the exact accepted revision to `main`.
+3. From a clean local checkout of that accepted `main` revision, install the pinned dependencies and validate the upload:
 
-## Branch and release flow
+   ```sh
+   pnpm install --frozen-lockfile
+   pnpm test
+   pnpm cloudflare:dry-run
+   ```
 
-Use only `development` and `main` on GitHub. Keep a private repository unless the owner deliberately chooses otherwise, make `main` the default and production branch, and use `development` for owner review and preview builds. Promote an accepted `development` commit to `main`; do not deploy an unreviewed development commit. GitHub Actions runs static checks, an offline Wrangler deployment dry run and the Docker build on both branches.
+4. Record the accepted commit and current successful Cloudflare deployment for rollback.
+5. With explicit release authority and the existing authenticated Wrangler session, deploy locally:
 
-## Cloudflare Workers Static Assets
+   ```sh
+   pnpm cloudflare:deploy
+   ```
 
-The local Wrangler configuration is preparation only: it contains no routes or custom domains and cannot take over `bentokumiko.com` by itself. Before any remote setup or DNS change, follow the [Cloudflare and OVH preparation guide](/docs/CLOUDFLARE.md). That guide records the exact Git integration settings, local checks, DNS/mail preservation sequence, domain cutover and optional future D1 limits.
+6. Verify both hostnames over HTTPS, `/`, `/service.html`, `/shopping.html`, `/enquire.html`, `/health`, a known asset and an unknown path that must return the branded 404 with status 404. Confirm the intended trip and shopping form embeds and their direct fallback links without sending customer data.
 
-## Rollback
+Pushing `main` does not deploy production. GitHub Actions is configured for pushes and pull requests to `development` and `main`, but the latest release had no observed remote run; check the actual run before relying on it.
 
-Record the last accepted commit and successful deployment before promotion. For Dokploy, redeploy the known-good deployment or rebuild its commit with the matching build arguments. For Cloudflare, roll back to the prior Worker deployment or redeploy the known-good commit; DNS rollback is a separate, deliberately reviewed operation described in the [Cloudflare guide](/docs/CLOUDFLARE.md). Recheck `/health`, homepage, explicit page URLs, enquiry mode and a 404 after either rollback.
+## Build configuration
+
+An ordinary build uses the approved public trip form ID `6DDMge`. A different approved trip ID can be supplied with `TALLY_FORM_ID`; an explicit empty value disables only the trip form and leaves the shopping form `Vpp72g` live. These are public build settings, not secrets. See [Tally enquiry activation](/docs/TALLY.md) before changing form configuration.
+
+`dist/` is generated and must not be edited by hand. Wrangler uploads only that directory. The Cloudflare routing and cache behavior are documented in [Cloudflare operations](/docs/CLOUDFLARE.md).
+
+## Application rollback
+
+For a bad application release, use Cloudflare deployment history to restore the recorded known-good deployment, or locally deploy the previously accepted `main` commit with the same public build settings. Re-run the production verification list after rollback.
+
+An application rollback does not require DNS or nameserver changes. Treat any DNS rollback as a separate incident and follow the DNSSEC-safe procedure in [Cloudflare operations](/docs/CLOUDFLARE.md).
+
+## Optional Docker packaging
+
+The Docker image builds the same static output with Node and serves it from nginx on container port `8080`:
+
+```sh
+docker build --build-arg TALLY_FORM_ID=6DDMge --tag bento-kumiko .
+docker run --rm -p 8080:8080 bento-kumiko
+```
+
+Open `http://127.0.0.1:8080` and verify `/health`. Using this image for hosting would require a separately approved infrastructure change; it is not part of the current Cloudflare release flow.

@@ -3,7 +3,7 @@ type: Guide
 title: "Tally enquiry activation"
 description: "Trip and shopping forms, build modes, field mapping and verification steps for the Tally enquiry integration."
 tags: [bento-kumiko, tally, forms]
-timestamp: 2026-10-29T19:32:58+09:00
+timestamp: 2026-10-30T11:41:27+09:00
 ---
 
 # Tally enquiry activation
@@ -39,11 +39,11 @@ Create these fields in Tally with the displayed labels and required state. The k
 2. To use a different approved published trip form, build with only its ID, not a URL: `TALLY_FORM_ID=abc123 pnpm build`. This does not change the dedicated shopping form.
 3. For explicit local review of the trip preview, run `TALLY_FORM_ID= pnpm build`. The trip preview validates fields locally and sends nothing; the shopping page still uses its approved live Tally form.
 4. Run `pnpm test`; its isolated checks cover both separated default forms, the trip override, explicit trip preview and malformed trip configuration without submitting data or changing an existing configured `dist/`.
-5. Before production, verify both responsive iframes and hosted-form fallbacks, then confirm the owner-side recipient, notification, privacy and confirmation settings in Tally.
+5. Before production or after any Tally-side edit, verify both responsive iframes and hosted-form fallbacks, then confirm the owner-side recipient, delivery, notification, privacy and confirmation settings in Tally. The shopping form's transport helper previously referred only to Tokyo; it has not been reverified against the approved website wording that return transport from Okayama is added at cost for all four cities.
 
 The configured pages use Tally's official widget script and `dynamicHeight=1` embed option so each iframe follows its form across viewport sizes and form pages. The host page does not style the cross-origin forms. See Tally's [embed guide](https://tally.so/help/embed-your-form) and [widget embed documentation](https://developers.tally.so/widgets/embeds).
 
-For Dokploy, leave `TALLY_FORM_ID` unset to use the Docker trip default, set another approved trip ID under Docker **Build Time Arguments** to override it, or set an explicit empty value for trip preview mode. The shopping form remains `Vpp72g`. Changing the trip mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
+For the optional Docker build, leave `TALLY_FORM_ID` unset to use the trip default, pass another approved public trip ID as a build argument to override it, or pass an explicit empty value for trip preview mode. The shopping form remains `Vpp72g`. The active Cloudflare release uses the same build semantics. Changing the trip mode or ID requires a rebuild because the site is static. Do not add a Tally API call or duplicate submission handler; Tally owns submission inside each published form.
 
 ## Privacy behavior
 

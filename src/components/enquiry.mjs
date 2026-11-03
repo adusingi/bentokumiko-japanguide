@@ -18,11 +18,13 @@ const configuredCopy = {
     trip: ["Japan trip enquiry", "open the enquiry form directly on Tally"],
     shopping: ["Shopping day enquiry", "open the shopping enquiry form directly on Tally"],
     loadFailure: "If the form does not load",
+    tripCall: "Would you like a five-minute introduction call before deciding? Choose your call preference in the form; I’ll arrange the video call with you personally in English or French.",
   },
   fr: {
     trip: ["Formulaire de demande pour un voyage au Japon", "ouvrez directement le formulaire de voyage sur Tally"],
     shopping: ["Formulaire de demande pour une journée shopping", "ouvrez directement le formulaire shopping sur Tally"],
     loadFailure: "Si le formulaire ne se charge pas",
+    tripCall: "Souhaitez-vous un appel vidéo de cinq minutes avant de vous décider ? Indiquez votre préférence dans le formulaire ; je conviendrai personnellement avec vous du moment, en français ou en anglais.",
   },
 };
 
@@ -33,6 +35,7 @@ export function renderEnquiry(tallyFormId, { locale = "en", kind = "trip" } = {}
     const hostedUrl = `https://tally.so/r/${tallyFormId}`;
     return `<div class="form-card tally-card" data-form-mode="tally">
         <iframe class="tally-frame" data-tally-src="${embedUrl}" title="${copy[kind][0]}" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+        ${kind === "trip" ? `<p class="f-note">${copy.tripCall}</p>` : ""}
         <p class="f-note">${copy.loadFailure}, <a href="${hostedUrl}">${copy[kind][1]}</a>.</p>
       </div>`;
   }
@@ -106,13 +109,14 @@ export function renderEnquiry(tallyFormId, { locale = "en", kind = "trip" } = {}
             </div>
             <div class="f-field f-wide">
               <fieldset class="f-radios">
-                <legend>Would you like a call to talk it through?</legend>
+                <legend>Would you like a five-minute introduction call?</legend>
                 <div class="f-radio-row">
                   <label class="f-radio"><input type="radio" data-field="call_preference" name="preview-call" value="Yes please" /> Yes please</label>
                   <label class="f-radio"><input type="radio" data-field="call_preference" name="preview-call" value="No need" /> No need</label>
                   <label class="f-radio"><input type="radio" data-field="call_preference" name="preview-call" value="Only if useful" /> Only if you think it is useful</label>
                 </div>
               </fieldset>
+              <p class="f-note">If you choose a call, I’ll arrange the short video call with you personally in English or French before you decide.</p>
             </div>
           </div>
           <button class="btn btn-red f-submit" type="submit">Check my answers</button>

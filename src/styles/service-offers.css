@@ -182,6 +182,10 @@
   font-size: 14px;
 }
 
+.service-value {
+  margin-bottom: 16px;
+}
+
 @media (min-width: 700px) {
   .service-intro {
     padding: 44px 0 28px;

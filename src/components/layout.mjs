@@ -53,6 +53,7 @@ export function renderLayout({ page, locale, title, description, style, fragment
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/styles/base.css" />
   <link rel="stylesheet" href="/assets/styles/${style}.css" />
+  ${page === "index" && locale === "en" ? '<link rel="stylesheet" href="/assets/styles/testimonials.css" />' : ""}
   <title>${title}</title>
 </head>
 <body data-page="${page}" data-locale="${locale}" data-preserved-fragments="${fragments.join(",")}">
@@ -89,7 +90,7 @@ export function renderLayout({ page, locale, title, description, style, fragment
     </div>
   </footer>
   <script src="/assets/scripts/site.js" defer></script>
-  ${page === "index" && locale === "en" ? '<script src="/assets/scripts/testimonial-popup.js" defer></script>' : ""}
+  ${page === "index" && locale === "en" ? '<script src="/assets/scripts/testimonials.js" defer></script>' : ""}
   ${page === "service" ? '<script src="/assets/scripts/service-tabs.js" defer></script>' : ""}
   ${enquiryMode === "tally" ? '<script src="https://tally.so/widgets/embed.js" defer></script>\n  <script src="/assets/scripts/tally-embed.js" defer></script>' : ""}
   ${enquiryMode === "preview" ? '<script src="/assets/scripts/enquiry-preview.js" defer></script>' : ""}

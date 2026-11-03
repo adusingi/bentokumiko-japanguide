@@ -1,0 +1,423 @@
+#testimonials {
+  --story-blush: #fff6f3;
+}
+
+#testimonials blockquote,
+.review-dialog blockquote {
+  margin: 0;
+}
+
+#testimonials .translation-label,
+.review-dialog .translation-label {
+  margin: 0;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.review-dialog .attribution {
+  margin: 20px 0 0;
+  color: var(--soft);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.review-dialog .attribution--stacked span {
+  display: block;
+}
+
+.review-dialog .attribution--stacked span + span {
+  margin-top: 2px;
+  color: var(--faint);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+#testimonials.stories-selected .sec-head {
+  max-width: 640px;
+  margin-bottom: 36px;
+}
+
+#testimonials.stories-selected .sec-kicker {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 0;
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+#testimonials.stories-selected .sec-kicker .jp {
+  font-size: 14px;
+  letter-spacing: .2em;
+}
+
+#testimonials.stories-selected .sec-head h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(29px, 4vw, 40px);
+}
+
+#testimonials.stories-selected .big-quote {
+  max-width: 24em;
+  margin: 0 0 14px;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(23px, 3.4vw, 32px);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+#testimonials.stories-selected .big-quote::before {
+  content: "“";
+  color: var(--red);
+}
+
+#testimonials.stories-selected > blockquote .attribution {
+  margin: 0 0 30px;
+  color: var(--faint);
+  font-size: 14.5px;
+  font-weight: 400;
+}
+
+#testimonials.stories-selected .highlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 40px;
+  margin: 0 0 30px;
+  padding: 0;
+  list-style: none;
+}
+
+#testimonials.stories-selected .highlights li {
+  position: relative;
+  padding: 10px 0 10px 26px;
+  border-bottom: 1px solid var(--line);
+  color: var(--soft);
+}
+
+#testimonials.stories-selected .highlights li::before {
+  position: absolute;
+  left: 0;
+  content: "—";
+  color: var(--red);
+  font-weight: 700;
+}
+
+#testimonials.stories-selected .highlights li strong {
+  color: var(--ink);
+}
+
+#testimonials .review-carousel {
+  margin-top: 26px;
+  padding: clamp(16px, 2.5vw, 24px);
+  border: 1px solid color-mix(in srgb, var(--red) 12%, var(--bg));
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--story-blush) 74%, var(--bg));
+}
+
+#testimonials .review-carousel__track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 2px 2px 8px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+#testimonials .review-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+#testimonials .review-card {
+  display: flex;
+  flex: 0 0 calc((100% - 32px) / 3);
+  flex-direction: column;
+  min-width: 0;
+  min-height: 360px;
+  padding: 24px 22px 22px;
+  border: 1px solid color-mix(in srgb, var(--red) 13%, var(--bg));
+  border-radius: 14px;
+  background: var(--bg);
+  box-shadow: 0 9px 24px rgba(33, 26, 20, .07);
+  scroll-snap-align: start;
+}
+
+#testimonials .review-card__quote {
+  height: 41px;
+  color: var(--red);
+  font-family: Georgia, serif;
+  font-size: 62px;
+  font-weight: 700;
+  line-height: .9;
+}
+
+#testimonials .review-card .translation-label {
+  min-height: 32px;
+  margin: 6px 0 0;
+  font-size: 9.5px;
+}
+
+#testimonials .review-card blockquote {
+  margin-top: 10px;
+}
+
+#testimonials .review-card__excerpt {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+#testimonials .review-card__read {
+  align-self: flex-start;
+  min-height: 36px;
+  margin: 12px 0 18px;
+  padding: 3px 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--red) 45%, transparent);
+  background: transparent;
+  color: var(--red-deep);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#testimonials .review-card__read:hover {
+  border-bottom-color: var(--red);
+}
+
+#testimonials .review-card__meta {
+  display: grid;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+#testimonials .review-card__meta strong {
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+#testimonials .review-card__meta span {
+  color: var(--faint);
+}
+
+#testimonials .review-carousel__controls {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+#testimonials .review-carousel__range {
+  color: var(--soft);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+#testimonials .review-carousel__dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+#testimonials .review-carousel__dots button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--red) 23%, var(--bg));
+  cursor: pointer;
+}
+
+#testimonials .review-carousel__dots button[aria-current="true"] {
+  background: var(--red);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 13%, transparent);
+}
+
+#testimonials .review-carousel__arrows {
+  display: flex;
+  gap: 8px;
+}
+
+#testimonials .review-carousel__arrows button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--red);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--red);
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#testimonials .review-carousel__arrows button:disabled {
+  border-color: var(--line);
+  color: var(--faint);
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.review-dialog {
+  width: min(720px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: 0 28px 90px rgba(33, 26, 20, .3);
+  color: var(--ink);
+}
+
+.review-dialog::backdrop {
+  background: rgba(33, 26, 20, .54);
+  backdrop-filter: blur(3px);
+}
+
+.review-dialog__surface {
+  max-height: calc(100dvh - 32px);
+  padding: clamp(26px, 5vw, 46px);
+  overflow-y: auto;
+}
+
+.review-dialog__close {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  float: right;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: -8px -8px 8px 20px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.review-dialog__eyebrow {
+  margin: 0 0 5px;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.review-dialog h2 {
+  margin: 0 54px 24px 0;
+  font-size: clamp(25px, 4vw, 34px);
+}
+
+.review-dialog__content > .translation-label {
+  margin-bottom: 12px;
+}
+
+.review-dialog__content blockquote p {
+  margin: 0;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(17px, 2.2vw, 20px);
+  line-height: 1.75;
+}
+
+.review-dialog__content blockquote p + p {
+  margin-top: 18px;
+}
+
+.review-dialog__content .attribution {
+  margin-top: 24px;
+}
+
+.review-dialog__original {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.review-dialog__original h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+@media (max-width: 900px) {
+  #testimonials .review-card {
+    flex-basis: calc((100% - 16px) / 2);
+  }
+}
+
+@media (max-width: 760px) {
+  #testimonials.stories-selected .highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  #testimonials .review-carousel {
+    padding: 12px;
+  }
+
+  #testimonials .review-card {
+    flex-basis: 100%;
+    min-height: 350px;
+    padding: 22px 20px 20px;
+  }
+
+  #testimonials .review-carousel__controls {
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+  }
+
+  #testimonials .review-carousel__dots {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+
+  .review-dialog {
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .review-dialog__surface {
+    max-height: calc(100dvh - 20px);
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 430px) {
+  #testimonials .review-card__excerpt {
+    font-size: 19px;
+  }
+}

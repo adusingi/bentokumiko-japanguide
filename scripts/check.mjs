@@ -327,11 +327,17 @@ async function inspectSite(directory, modes) {
       const tallyWidgetScript = 'src="https://tally.so/widgets/embed.js"';
       const tallyEmbedScript = 'src="/assets/scripts/tally-embed.js"';
       const enquiryPreviewScript = 'src="/assets/scripts/enquiry-preview.js"';
+      const testimonialsStyle = 'href="/assets/styles/testimonials.css"';
+      const testimonialsScript = 'src="/assets/scripts/testimonials.js"';
+      const hasEnglishTestimonials = page === "index" && locale === "en";
       const formKind = page === "index" || page === "enquire" ? "trip" : page === "shopping" ? "shopping" : null;
       const mode = formKind ? modes[locale][formKind] : null;
       assert((mode === "tally") === html.includes(tallyWidgetScript), `${expected.output} has the wrong Tally widget state`);
       assert((mode === "tally") === html.includes(tallyEmbedScript), `${expected.output} has the wrong Tally initializer state`);
       assert((mode === "preview") === html.includes(enquiryPreviewScript), `${expected.output} has the wrong preview-script state`);
+      assert(hasEnglishTestimonials === html.includes(testimonialsStyle), `${expected.output} has the wrong testimonial stylesheet state`);
+      assert(hasEnglishTestimonials === html.includes(testimonialsScript), `${expected.output} has the wrong testimonial script state`);
+      assert(!html.includes('src="/assets/scripts/testimonial-popup.js"'), `${expected.output} still loads the obsolete testimonial popup`);
       assert((locale === "en") === html.includes("data-language-suggestion hidden"), `${expected.output} has the wrong French-suggestion markup state`);
       if (locale === "en") {
         assert(html.includes(`<a href="${localeRoutes.fr.route}" lang="fr" hreflang="fr" data-language-alternate>`), `${expected.output} lacks its French suggestion destination`);
@@ -346,7 +352,23 @@ async function inspectSite(directory, modes) {
   const englishBlog = htmlByOutput.get("blog.html");
   const frenchBlog = htmlByOutput.get("fr/blog.html");
   assert(!englishIndex.includes('id="blog"'), "English homepage still contains the removed blog section");
-  assert(englishIndex.includes("Everyln &amp; Fabiola"), "English homepage testimonial changed during the French revision");
+  assert(englishIndex.includes("<h2>What my customers say</h2>"), "English homepage lacks the approved testimonial heading");
+  assert(englishIndex.includes('class="block wrap reveal stories-selected"'), "English homepage lacks the approved testimonial layout");
+  const reviewCards = [...englishIndex.matchAll(/data-review-card="([^"]+)"/g)].map((match) => match[1]);
+  const reviewTemplates = [...englishIndex.matchAll(/<template id="review-source-([^"]+)">/g)].map((match) => match[1]);
+  const approvedReviewKeys = ["everyln", "marc", "heri", "laure"];
+  assert(JSON.stringify(reviewCards) === JSON.stringify(approvedReviewKeys), `English homepage has the wrong review cards: ${reviewCards.join(", ")}`);
+  assert(JSON.stringify(reviewTemplates) === JSON.stringify(approvedReviewKeys), `English homepage has the wrong full-review templates: ${reviewTemplates.join(", ")}`);
+  assert(englishIndex.includes('<dialog class="review-dialog" id="review-dialog"'), "English homepage lacks the full-testimonial dialog");
+  assert(englishIndex.includes("Translated from French · proposed wording"), "English homepage lacks Heri’s translation label");
+  assert(englishIndex.includes("Full approved French original"), "English homepage lacks Heri’s full approved French source");
+  assert(englishIndex.includes("Pour notre premier voyage au Japon, nous pensions à un séjour court, fort en souvenirs."), "English homepage lacks Heri’s approved French words");
+  for (const name of ["Everyln &amp; Fabiola", "Marc L.", "Heri R.", "Laure D."]) {
+    assert(englishIndex.includes(name), `English homepage lacks the approved ${name} review`);
+  }
+  for (const obsolete of ["One honest lesson, now in every trip I plan", "guest-cards", 'data-review-card="lesson"', "fictional-label", "Local design preview", "prototype-switcher"]) {
+    assert(!englishIndex.includes(obsolete), `English homepage retains obsolete testimonial content: ${obsolete}`);
+  }
   assert(englishBlog.includes("5 things our guests learned in Japan"), "English blog lost the supplied guest tips");
   assert(frenchBlog.includes("5 leçons apprises par mes voyageurs au Japon"), "French blog lost the authored guest lessons");
   const approvedFrenchTestimonial = "Pour notre premier voyage au Japon, nous pensions à un séjour court, fort en souvenirs. Les enfants voulaient de l’aventure, les parents voulaient découvrir les attraits uniques de la culture japonaise. Kumiko nous a préparé soigneusement une sélection d’hôtels, de restaurants ainsi que les principaux sites à visiter. On a découvert un excellent restaurant basque, on s’est amusé à Universal Studios Japan, et on a aimé les hôtels qu’elle a choisis, et bien plus encore. Je recommande !";
@@ -367,6 +389,16 @@ async function inspectSite(directory, modes) {
   assert(!frenchIndex.includes('class="highlights"'), "French Heri testimonial retains E&F-specific highlights");
   assert(!frenchIndex.includes("Une leçon sincère, désormais intégrée à chaque voyage"), "French Heri testimonial retains the E&F-specific lesson");
   assert(frenchIndex.includes("Votre voyage au Japon, <em>sur mesure</em>."), "French homepage lost its mobile-safe hero wording");
+  for (const [label, html, prices, currencyNote] of [
+    ["English homepage", englishIndex, ["US$350", "+US$50", "US$200"], "All prices are in US dollars."],
+    ["French homepage", frenchIndex, ["350 €", "+50 €", "200 €"], "Tous les tarifs sont indiqués en euros."],
+  ]) {
+    for (const price of prices) assert(html.includes(price), `${label} lacks the fixed ${price} price`);
+    assert(html.includes(currencyNote), `${label} lacks its currency note`);
+    assert(html.includes("Make more of your budget") || html.includes("Profitez au mieux de votre budget"), `${label} lacks the approved savings copy`);
+  }
+  assert(englishIndex.includes("about US$1,480 in total") && englishIndex.includes("roughly US$740 each"), "English historic sample lost its USD qualification");
+  assert(frenchIndex.includes("environ US$1,480 au total") && frenchIndex.includes("approximativement US$740 par personne"), "French historic sample lost its USD qualification");
   assert(frenchAbout.includes("<h1>Le Japon, pour un voyage mémorable.</h1>"), "French About page lacks the approved heading");
   assert(frenchAbout.includes("Une famille de voyageurs"), "French About page lacks the approved family wording");
   for (const [output, html] of [["fr/index.html", frenchIndex], ["fr/a-propos.html", frenchAbout], ["fr/blog.html", frenchBlog]]) {
@@ -517,6 +549,18 @@ assert(!/\.tally-frame\s*\{[^}]*min-height/s.test(baseStyles), "Tally frame CSS 
 const indexStyles = await readFile(path.join(root, "src/styles/index.css"), "utf8");
 assert(/\.hero-grid\s*>\s*\*\s*\{\s*min-width:\s*0\s*\}/.test(indexStyles), "Hero grid children can force horizontal overflow");
 assert(/grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(indexStyles), "Mobile hero grid retains an auto min-content track");
+const testimonialsStyles = await readFile(path.join(root, "src/styles/testimonials.css"), "utf8");
+assert(/flex:\s*0 0 calc\(\(100% - 32px\) \/ 3\)/.test(testimonialsStyles), "Desktop testimonials do not expose three cards");
+assert(/@media \(max-width: 900px\)[\s\S]*?flex-basis:\s*calc\(\(100% - 16px\) \/ 2\)/.test(testimonialsStyles), "Tablet testimonials do not expose two cards");
+assert(/@media \(max-width: 600px\)[\s\S]*?flex-basis:\s*100%/.test(testimonialsStyles), "Mobile testimonials do not expose one card");
+assert(!testimonialsStyles.includes("prototype") && !testimonialsStyles.includes("fictional"), "Testimonial styles retain preview-only terminology");
+const testimonialsScript = await readFile(path.join(root, "src/assets/scripts/testimonials.js"), "utf8");
+assert(testimonialsScript.includes('if (!reviewCarousel) return;'), "Testimonial script lacks its page guard");
+assert(testimonialsScript.includes("prefers-reduced-motion: reduce"), "Testimonial script ignores reduced-motion preferences");
+assert(testimonialsScript.includes('"ResizeObserver" in window'), "Testimonial script does not respond to carousel resizing");
+assert(testimonialsScript.includes("dialogReturnFocus") && testimonialsScript.includes('reviewDialog.addEventListener("close"'), "Testimonial dialog does not restore trigger focus");
+assert(!testimonialsScript.includes("searchParams") && !testimonialsScript.includes("variant") && !testimonialsScript.includes("prototype"), "Testimonial script retains preview-only behavior");
+new Function(testimonialsScript);
 const blogStyles = await readFile(path.join(root, "src/styles/blog.css"), "utf8");
 assert(/\.places-foot\s*>\s*\*\s*\{\s*min-width:\s*0\s*\}/.test(blogStyles), "Blog footer flex children cannot shrink");
 assert(/\.places-foot a\s*\{[^}]*white-space:\s*normal[^}]*overflow-wrap:\s*anywhere/.test(blogStyles), "Long blog map links cannot wrap safely");
